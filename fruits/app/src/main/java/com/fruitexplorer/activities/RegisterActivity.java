@@ -14,6 +14,7 @@ import com.fruitexplorer.api.ApiClient;
 import com.fruitexplorer.api.ApiService;
 import com.fruitexplorer.models.AuthResponse;
 import com.fruitexplorer.models.RegisterRequest;
+import com.fruitexplorer.utils.SessionManager;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,6 +25,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText editTextDisplayName, editTextEmail, editTextPassword;
     private Button buttonRegister;
     private ApiService apiService;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,7 @@ public class RegisterActivity extends AppCompatActivity {
         buttonRegister = findViewById(R.id.buttonRegister);
 
         apiService = ApiClient.getApiService();
+        sessionManager = new SessionManager(getApplicationContext());
 
         buttonRegister.setOnClickListener(v -> registerUser());
     }
@@ -57,9 +60,10 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(RegisterActivity.this, response.body().getMensaje(), Toast.LENGTH_LONG).show();
-                    // Aquí podrías guardar el token y el usuario con un SessionManager
-                    // y redirigir a HomeActivity
+                    // Guardar la sesión del nuevo usuario
+                    sessionManager.createLoginSession(response.body().getToken(), response.body().getUsuario());
+
+                    // Redirigir a HomeActivity
                     Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
                     startActivity(intent);
                     finish();

@@ -14,6 +14,7 @@ import com.fruitexplorer.api.ApiClient;
 import com.fruitexplorer.api.ApiService;
 import com.fruitexplorer.models.AuthResponse;
 import com.fruitexplorer.models.LoginRequest;
+import com.fruitexplorer.utils.SessionManager;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,11 +25,20 @@ public class LoginActivity extends AppCompatActivity {
     private EditText editTextEmail, editTextPassword;
     private Button buttonLogin, buttonGoToRegister;
     private ApiService apiService;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        sessionManager = new SessionManager(getApplicationContext());
+
+        // Comprobar si el usuario ya ha iniciado sesión
+        if (sessionManager.isLoggedIn()) {
+            goToHomeActivity();
+            return; // Evita que el resto del código de onCreate se ejecute
+        }
 
         editTextEmail = findViewById(R.id.emailInput);
         editTextPassword = findViewById(R.id.passwordInput);
@@ -60,12 +70,11 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(LoginActivity.this, response.body().getMensaje(), Toast.LENGTH_LONG).show();
-                    // Aquí podrías guardar el token y el usuario con un SessionManager
-                    // y redirigir a HomeActivity
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    startActivity(intent);
-                    finish();
+                    // Guardar la sesión del usuario
+                    sessionManager.createLoginSession(response.body().getToken(), response.body().getUsuario());
+
+                    // Redirigir a HomeActivity
+                    goToHomeActivity();
                 } else {
                     // Manejar error de la API (ej. credenciales incorrectas)
                     Toast.makeText(LoginActivity.this, "Error en el login. Código: " + response.code(), Toast.LENGTH_SHORT).show();
@@ -79,5 +88,11 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void goToHomeActivity() {
+        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+        startActivity(intent);
+        finish(); // Cierra LoginActivity para que el usuario no pueda volver a ella con el botón "atrás"
     }
 }
