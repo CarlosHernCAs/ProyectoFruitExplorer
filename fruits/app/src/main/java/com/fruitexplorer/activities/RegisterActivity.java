@@ -37,7 +37,7 @@ public class RegisterActivity extends AppCompatActivity {
         editTextPassword = findViewById(R.id.editTextPassword);
         buttonRegister = findViewById(R.id.buttonRegister);
 
-        apiService = ApiClient.getApiService();
+        apiService = ApiClient.getApiService(this);
         sessionManager = new SessionManager(getApplicationContext());
 
         buttonRegister.setOnClickListener(v -> registerUser());

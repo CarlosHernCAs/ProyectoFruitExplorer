@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         buttonLogin = findViewById(R.id.btnLogin);
         buttonGoToRegister = findViewById(R.id.btnGoToRegister);
 
-        apiService = ApiClient.getApiService();
+        apiService = ApiClient.getApiService(this);
 
         buttonLogin.setOnClickListener(v -> loginUser());
         buttonGoToRegister.setOnClickListener(v -> {

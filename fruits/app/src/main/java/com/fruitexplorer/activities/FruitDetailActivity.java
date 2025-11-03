@@ -9,12 +9,20 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.fruitexplorer.R;
+import com.fruitexplorer.api.ApiClient;
+import com.fruitexplorer.api.ApiService;
 import com.fruitexplorer.models.Fruit;
+import com.fruitexplorer.models.LogQueryRequest;
+import com.fruitexplorer.utils.SessionManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.JsonObject;
 
 import java.util.Locale;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class FruitDetailActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
 
@@ -24,6 +32,9 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
     private TextToSpeech textToSpeech;
     private FloatingActionButton fabSpeak;
     private TextView descriptionTextView;
+    private Fruit currentFruit;
+    private ApiService apiService;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,31 +50,33 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
         fabSpeak = findViewById(R.id.fabSpeak);
 
         // Recibir el objeto Fruit del Intent
-        Fruit fruit = getIntent().getParcelableExtra(EXTRA_FRUIT);
+        currentFruit = getIntent().getParcelableExtra(EXTRA_FRUIT);
 
         // Inicializar TextToSpeech
         textToSpeech = new TextToSpeech(this, this);
+        apiService = ApiClient.getApiService(this);
+        sessionManager = new SessionManager(this);
 
-        if (fruit != null) {
+        if (currentFruit != null) {
             // Poblar las vistas con los datos de la fruta
             if (getSupportActionBar() != null) {
-                getSupportActionBar().setTitle(fruit.getCommonName());
+                getSupportActionBar().setTitle(currentFruit.getCommonName());
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Muestra el botón de atrás
             }
 
-            commonNameTextView.setText(fruit.getCommonName());
-            scientificNameTextView.setText(fruit.getScientificName());
-            descriptionTextView.setText(fruit.getDescription());
+            commonNameTextView.setText(currentFruit.getCommonName());
+            scientificNameTextView.setText(currentFruit.getScientificName());
+            descriptionTextView.setText(currentFruit.getDescription());
 
             // Cargar la imagen desde la URL usando Glide
             Glide.with(this)
-                    .load(fruit.getImageUrl())
+                    .load(currentFruit.getImageUrl())
                     .placeholder(R.drawable.ic_launcher_background) // Imagen mientras carga
                     .error(R.drawable.ic_launcher_background)       // Imagen si hay error
                     .into(fruitImageView);
 
             // Formatear y mostrar los datos nutricionales
-            nutritionalDataTextView.setText(formatNutritionalData(fruit.getNutritionalData()));
+            nutritionalDataTextView.setText(formatNutritionalData(currentFruit.getNutritionalData()));
         }
 
         fabSpeak.setOnClickListener(v -> {
@@ -110,8 +123,29 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
     private void speakDescription() {
         String description = descriptionTextView.getText().toString();
         if (!description.isEmpty()) {
+            // Registramos que se usó la voz
+            logVoiceUsage();
             textToSpeech.speak(description, TextToSpeech.QUEUE_FLUSH, null, null);
         }
+    }
+
+    private void logVoiceUsage() {
+        if (currentFruit == null || !sessionManager.isLoggedIn()) {
+            return;
+        }
+        // Creamos una nueva petición indicando que se usó la voz.
+        // No incluimos la ubicación aquí para simplificar.
+        LogQueryRequest request = new LogQueryRequest(currentFruit.getCommonName(), null, true);
+        apiService.logQuery(request).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Log.i(TAG, "Uso de voz registrado para: " + currentFruit.getCommonName());
+                }
+            }
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) { /* No hacemos nada si falla */ }
+        });
     }
 
     @Override

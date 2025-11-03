@@ -18,7 +18,7 @@ public class SessionManager {
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
-    private Context context;
+    private Context context;    
 
     public SessionManager(Context context) {
         this.context = context;
@@ -59,4 +59,7 @@ public class SessionManager {
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(i);
     }
+    public String getToken() {
+       return sharedPreferences.getString(KEY_AUTH_TOKEN, null);
+   }
 }

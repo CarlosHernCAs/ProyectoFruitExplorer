@@ -23,6 +23,7 @@ import com.fruitexplorer.utils.SessionManager;
 public class HomeActivity extends AppCompatActivity {
 
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 101;
 
     private SessionManager sessionManager;
     private TextView welcomeTextView;
@@ -51,6 +52,9 @@ public class HomeActivity extends AppCompatActivity {
         btnStartDetection.setOnClickListener(v -> {
             checkCameraPermissionAndProceed();
         });
+
+        // Pedimos permiso de ubicación al iniciar, para tenerlo listo.
+        checkLocationPermission();
     }
 
     private void checkCameraPermissionAndProceed() {
@@ -66,10 +70,20 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    private void checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Si no tenemos el permiso, lo solicitamos. No bloqueamos la UI si no lo dan.
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            // No hacemos nada especial si lo deniegan, la app puede funcionar sin ubicación.
+            Toast.makeText(this, "Permiso de ubicación procesado.", Toast.LENGTH_SHORT).show();
+        } else if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // El usuario concedió el permiso
                 startCameraActivity();

@@ -1,6 +1,8 @@
 package com.fruitexplorer.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -13,6 +15,7 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.Camera;
+import androidx.core.app.ActivityCompat;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.Preview;
@@ -25,7 +28,11 @@ import com.fruitexplorer.R;
 import com.fruitexplorer.api.ApiClient;
 import com.fruitexplorer.api.ApiService;
 import com.fruitexplorer.models.Fruit;
+import com.fruitexplorer.models.LogQueryRequest;
 import com.fruitexplorer.models.FruitResponse;
+import com.fruitexplorer.utils.SessionManager;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.concurrent.ExecutorService;
@@ -48,6 +55,7 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
     private Button btnSeeDetails;
     private ImageButton btnRetry;
 
+    private SessionManager sessionManager;
     private ApiService apiService;
     private String lastDetectedFruit = "";
     private String lockedFruit = null; // Fruta "bloqueada"
@@ -58,6 +66,8 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
 
     // Executor para correr el análisis en un hilo separado y no bloquear la UI
     private ExecutorService cameraExecutor;
+    // Cliente para obtener la ubicación
+    private FusedLocationProviderClient fusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +80,12 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
         btnSeeDetails = findViewById(R.id.btnSeeDetails);
         btnRetry = findViewById(R.id.btnRetry);
 
+        sessionManager = new SessionManager(this);
         // Inicializamos el servicio de la API
-        apiService = ApiClient.getApiService();
+        apiService = ApiClient.getApiService(this);
+
+        // Inicializamos el cliente de ubicación
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         // Creamos un hilo único para el análisis de imágenes
         cameraExecutor = Executors.newSingleThreadExecutor();
@@ -192,6 +206,7 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
                 confirmationRunnable = () -> {
                     lockedFruit = fruitName;
                     pauseDetection();
+                    logFruitQuery(fruitName, null, false); // <-- REGISTRAMOS SIN UBICACIÓN NI VOZ AÚN
                     confirmationGroup.setVisibility(View.VISIBLE);
                 };
                 // Programamos la confirmación para dentro de 1.5 segundos
@@ -212,7 +227,55 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
         }, ContextCompat.getMainExecutor(this));
     }
 
+    private void logFruitQuery(String fruitName, String location, boolean usedTTS) {
+        if (!sessionManager.isLoggedIn()) {
+            Log.w(TAG, "Usuario no logueado. No se puede registrar la consulta.");
+            return;
+        }
+
+        LogQueryRequest request = new LogQueryRequest(fruitName, location, usedTTS);
+        apiService.logQuery(request).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Log.i(TAG, "Consulta para '" + fruitName + "' registrada. Ubicación: " + location);
+                } else {
+                    Log.e(TAG, "Error al registrar la consulta. Código: " + response.code());
+                }
+            }
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e(TAG, "Fallo de red al registrar la consulta.", t);
+            }
+        });
+    }
+
     private void fetchFruitDetails(String fruitName) {
+        // Primero, intentamos obtener la ubicación
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, location -> {
+                        String locationString = null;
+                        if (location != null) {
+                            locationString = location.getLatitude() + "," + location.getLongitude();
+                        }
+                        // Una vez tenemos la ubicación (o no), registramos la consulta y buscamos los detalles
+                        logFruitQuery(fruitName, locationString, false); // Aún no sabemos si usará TTS
+                        fetchFruitDetailsApiCall(fruitName);
+                    })
+                    .addOnFailureListener(e -> {
+                        // Si falla, continuamos sin ubicación
+                        logFruitQuery(fruitName, null, false);
+                        fetchFruitDetailsApiCall(fruitName);
+                    });
+        } else {
+            // Si no hay permiso, continuamos sin ubicación
+            logFruitQuery(fruitName, null, false);
+            fetchFruitDetailsApiCall(fruitName);
+        }
+    }
+
+    private void fetchFruitDetailsApiCall(String fruitName) {
         apiService.getFruitBySlug(fruitName).enqueue(new Callback<FruitResponse>() {
             @Override
             public void onResponse(Call<FruitResponse> call, Response<FruitResponse> response) {
