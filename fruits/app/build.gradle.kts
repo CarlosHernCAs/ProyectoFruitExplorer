@@ -44,6 +44,9 @@ dependencies {
     // TensorFlow Lite Task Library para visión
     implementation("org.tensorflow:tensorflow-lite-task-vision:0.4.3")
 
+    // Glide para la carga de imágenes desde URL
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")

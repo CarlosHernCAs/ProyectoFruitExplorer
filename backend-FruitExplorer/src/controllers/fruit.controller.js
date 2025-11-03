@@ -52,7 +52,11 @@ export const getFruitById = async (req, res) => {
 
     if (rows.length === 0) return res.status(404).json({ mensaje: 'Fruta no encontrada' });
 
-    res.status(200).json({ fruta: rows[0] });
+    const fruitData = rows[0];
+    if (fruitData.nutritional) {
+      fruitData.nutritional = JSON.parse(fruitData.nutritional);
+    }
+    res.status(200).json({ fruta: fruitData });
   } catch (err) {
     console.error('Error getFruitById', err);
     res.status(500).json({ mensaje: 'Error al obtener la fruta' });
@@ -72,7 +76,12 @@ export const getFruitBySlug = async (req, res) => {
 
     if (rows.length === 0) return res.status(404).json({ mensaje: 'Fruta no encontrada' });
 
-    res.status(200).json({ fruta: rows[0] });
+    // Parsear el campo 'nutritional' de string a JSON antes de enviar
+    const fruitData = rows[0];
+    if (fruitData.nutritional) {
+      fruitData.nutritional = JSON.parse(fruitData.nutritional);
+    }
+    res.status(200).json({ fruta: fruitData });
   } catch (err) {
     console.error('Error getFruitBySlug', err);
     res.status(500).json({ mensaje: 'Error al obtener la fruta' });
