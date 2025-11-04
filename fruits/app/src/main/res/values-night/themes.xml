@@ -2,6 +2,8 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Fruits" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
+        <item name="colorPrimary">@color/iconColor</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     </style>
 </resources>

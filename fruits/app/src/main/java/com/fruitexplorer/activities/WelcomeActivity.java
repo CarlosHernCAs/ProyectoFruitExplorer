@@ -8,8 +8,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.annotation.NonNull;
@@ -32,16 +35,18 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_welcome);
 
         sessionManager = new SessionManager(this);
 
         welcomeTextView = findViewById(R.id.welcomeText);
         btnContinue = findViewById(R.id.btnContinue);
 
-        // Personalizar el mensaje de bienvenida
-        String displayName = sessionManager.getUserDisplayName();
-        welcomeTextView.setText("¡Bienvenido a FruitExplorer, " + displayName + "!");
+        // --- INICIO: Código de la animación ---
+        ImageView logo = findViewById(R.id.iconImageView);
+        Animation logoAnimation = AnimationUtils.loadAnimation(this, R.anim.logo_animation);
+        logo.startAnimation(logoAnimation);
+        // --- FIN: Código de la animación ---
 
         btnContinue.setOnClickListener(v -> {
             checkCameraPermissionAndProceed();

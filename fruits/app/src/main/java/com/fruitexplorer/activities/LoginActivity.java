@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -38,6 +41,13 @@ public class LoginActivity extends AppCompatActivity {
         buttonGoToRegister = findViewById(R.id.btnGoToRegister);
 
         apiService = ApiClient.getApiService(this);
+        sessionManager = new SessionManager(this);
+
+        // --- INICIO: Código de la animación ---
+        ImageView logo = findViewById(R.id.logoImageView);
+        Animation logoAnimation = AnimationUtils.loadAnimation(this, R.anim.logo_animation);
+        logo.startAnimation(logoAnimation);
+        // --- FIN: Código de la animación ---
 
         buttonLogin.setOnClickListener(v -> loginUser());
         buttonGoToRegister.setOnClickListener(v -> {
@@ -87,7 +97,7 @@ public class LoginActivity extends AppCompatActivity {
         if (sessionManager.hasSeenWelcomeScreen()) {
             intent = new Intent(LoginActivity.this, ExploreActivity.class);
         } else {
-            intent = new Intent(LoginActivity.this, WelcomeActivity.class);
+           intent = new Intent(LoginActivity.this, WelcomeActivity.class);
         }
         startActivity(intent);
         finish(); // Cierra LoginActivity para que el usuario no pueda volver a ella con el botón "atrás"

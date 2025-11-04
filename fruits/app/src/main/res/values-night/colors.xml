@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="textColorPrimary">#FAFAFA</color>
+    <color name="textColorSecondary">#BDBDBD</color>
+    <color name="backgroundColor">#303030</color>
+    <color name="cardBackgroundColor">#424242</color>
+    <color name="iconColor">#66BB6A</color>
+    <color name="colorOnPrimary">#121212</color>
+</resources>
