@@ -63,8 +63,8 @@ public class RegisterActivity extends AppCompatActivity {
                     // Guardar la sesión del nuevo usuario
                     sessionManager.createLoginSession(response.body().getToken(), response.body().getUsuario());
 
-                    // Redirigir a HomeActivity
-                    Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
+                    // Como es un nuevo registro, siempre vamos a la pantalla de bienvenida
+                    Intent intent = new Intent(RegisterActivity.this, WelcomeActivity.class);
                     startActivity(intent);
                     finish();
                 } else {

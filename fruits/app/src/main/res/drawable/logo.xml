@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Círculo que representa la fruta -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#FFC107" /> <!-- Un color anaranjado/amarillo -->
+            <size android:width="120dp" android:height="120dp"/>
+        </shape>
+    </item>
+    <!-- Hoja de la fruta -->
+    <item android:drawable="@drawable/ic_leaf" android:width="50dp" android:height="50dp" android:gravity="top|center_horizontal" android:top="5dp" android:right="15dp"/>
+</layer-list>

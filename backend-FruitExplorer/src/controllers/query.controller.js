@@ -30,16 +30,43 @@ export const logQuery = async (req, res) => {
     // Asumimos que la tabla 'queries' tiene estas columnas.
     // La ubicación se puede mejorar para guardar latitud y longitud por separado.
     // Ajustamos los nombres de las columnas para que coincidan con el archivo .sql
-    await pool.query(
+    const [result] = await pool.query(
       `INSERT INTO queries (user_id, fruit_id, location, voice_enabled, detected_at)
        VALUES (?, ?, ?, ?, NOW())`,
       [userId, fruitId, location || null, usedTextToSpeech || false]
     );
 
-    res.status(201).json({ mensaje: 'Consulta registrada correctamente.' });
+    res.status(201).json({
+      mensaje: 'Consulta registrada correctamente.',
+      queryId: result.insertId // Devolvemos el ID de la fila recién creada
+    });
 
   } catch (err) {
     console.error('Error al registrar la consulta:', err);
     res.status(500).json({ mensaje: 'Error interno del servidor al registrar la consulta.' });
+  }
+};
+
+/**
+ * Actualiza una consulta existente para marcar que se usó el texto a voz.
+ */
+export const updateQueryVoiceStatus = async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.id; // Asegurarnos que el usuario solo actualiza sus propias consultas
+
+  try {
+    const [result] = await pool.query(
+      'UPDATE queries SET voice_enabled = true WHERE id = ? AND user_id = ?',
+      [id, userId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ mensaje: 'No se encontró la consulta o no tienes permiso para actualizarla.' });
+    }
+
+    res.status(200).json({ mensaje: 'Consulta actualizada correctamente.' });
+  } catch (err) {
+    console.error('Error al actualizar la consulta:', err);
+    res.status(500).json({ mensaje: 'Error interno del servidor al actualizar la consulta.' });
   }
 };

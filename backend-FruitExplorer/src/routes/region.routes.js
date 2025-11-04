@@ -4,7 +4,8 @@ import {
   listRegions,
   getRegionById,
   updateRegion,
-  deleteRegion
+  deleteRegion,
+  getFruitsByRegion
 } from '../controllers/region.controller.js';
 import { requireAuth } from '../middlewares/auth.middleware.js';
 import { requireRole } from '../middlewares/role.middleware.js';
@@ -19,5 +20,8 @@ router.delete('/:id', requireAuth, requireRole('admin'), deleteRegion);
 // Usuarios autenticados pueden ver las regiones
 router.get('/', requireAuth, listRegions);
 router.get('/:id', requireAuth, getRegionById);
+
+// Ruta para obtener las frutas de una región específica
+router.get('/:id/fruits', requireAuth, getFruitsByRegion);
 
 export default router;

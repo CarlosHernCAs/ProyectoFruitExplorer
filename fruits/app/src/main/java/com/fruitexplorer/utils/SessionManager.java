@@ -15,6 +15,7 @@ public class SessionManager {
     private static final String KEY_USER_ID = "userId";
     private static final String KEY_USER_EMAIL = "userEmail";
     private static final String KEY_USER_DISPLAY_NAME = "userDisplayName";
+    private static final String KEY_HAS_SEEN_WELCOME = "hasSeenWelcome";
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -59,7 +60,13 @@ public class SessionManager {
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(i);
     }
-    public String getToken() {
-       return sharedPreferences.getString(KEY_AUTH_TOKEN, null);
-   }
+
+    public void setWelcomeScreenSeen() {
+        editor.putBoolean(KEY_HAS_SEEN_WELCOME, true);
+        editor.commit();
+    }
+
+    public boolean hasSeenWelcomeScreen() {
+        return sharedPreferences.getBoolean(KEY_HAS_SEEN_WELCOME, false);
+    }
 }

@@ -50,6 +50,12 @@ dependencies {
     // Servicios de Ubicación de Google Play
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
+    // OpenStreetMap SDK (osmdroid)
+    implementation("org.osmdroid:osmdroid-android:6.1.18")
+
+    // AndroidX Preference (necesaria para la configuración de osmdroid)
+    implementation("androidx.preference:preference-ktx:1.2.1")
+
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")

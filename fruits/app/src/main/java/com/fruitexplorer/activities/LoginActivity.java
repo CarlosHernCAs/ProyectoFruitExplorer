@@ -32,14 +32,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        sessionManager = new SessionManager(getApplicationContext());
-
-        // Comprobar si el usuario ya ha iniciado sesión
-        if (sessionManager.isLoggedIn()) {
-            goToHomeActivity();
-            return; // Evita que el resto del código de onCreate se ejecute
-        }
-
         editTextEmail = findViewById(R.id.emailInput);
         editTextPassword = findViewById(R.id.passwordInput);
         buttonLogin = findViewById(R.id.btnLogin);
@@ -74,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                     sessionManager.createLoginSession(response.body().getToken(), response.body().getUsuario());
 
                     // Redirigir a HomeActivity
-                    goToHomeActivity();
+                    goToNextActivity();
                 } else {
                     // Manejar error de la API (ej. credenciales incorrectas)
                     Toast.makeText(LoginActivity.this, "Error en el login. Código: " + response.code(), Toast.LENGTH_SHORT).show();
@@ -90,8 +82,13 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void goToHomeActivity() {
-        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+    private void goToNextActivity() {
+        Intent intent;
+        if (sessionManager.hasSeenWelcomeScreen()) {
+            intent = new Intent(LoginActivity.this, ExploreActivity.class);
+        } else {
+            intent = new Intent(LoginActivity.this, WelcomeActivity.class);
+        }
         startActivity(intent);
         finish(); // Cierra LoginActivity para que el usuario no pueda volver a ella con el botón "atrás"
     }

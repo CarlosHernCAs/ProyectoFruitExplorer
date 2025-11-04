@@ -95,3 +95,25 @@ export const deleteRegion = async (req, res) => {
     res.status(500).json({ mensaje: 'Error al eliminar la región' });
   }
 };
+
+// Obtener todas las frutas de una región específica
+export const getFruitsByRegion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [rows] = await pool.query(
+      `SELECT f.id, f.slug, f.common_name, f.scientific_name, f.description, f.image_url, f.nutritional
+       FROM fruits f
+       INNER JOIN fruit_regions fr ON f.id = fr.fruit_id
+       WHERE fr.region_id = ?
+       ORDER BY f.common_name ASC`,
+      [id]
+    );
+
+    if (rows.length === 0) return res.status(404).json({ mensaje: 'No se encontraron frutas para esta región o la región no existe.' });
+
+    res.status(200).json({ frutas: rows }); // Cambiamos "fruta" por "frutas"
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ mensaje: 'Error al obtener las frutas de la región' });
+  }
+};

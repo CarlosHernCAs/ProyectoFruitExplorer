@@ -27,6 +27,7 @@ import retrofit2.Response;
 public class FruitDetailActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
 
     public static final String EXTRA_FRUIT = "extra_fruit";
+    public static final String EXTRA_QUERY_ID = "extra_query_id";
     private static final String TAG = "FruitDetailActivity";
 
     private TextToSpeech textToSpeech;
@@ -35,6 +36,7 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
     private Fruit currentFruit;
     private ApiService apiService;
     private SessionManager sessionManager;
+    private long queryId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,7 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
 
         // Recibir el objeto Fruit del Intent
         currentFruit = getIntent().getParcelableExtra(EXTRA_FRUIT);
+        queryId = getIntent().getLongExtra(EXTRA_QUERY_ID, -1);
 
         // Inicializar TextToSpeech
         textToSpeech = new TextToSpeech(this, this);
@@ -130,17 +133,18 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
     }
 
     private void logVoiceUsage() {
-        if (currentFruit == null || !sessionManager.isLoggedIn()) {
+        if (queryId == -1 || !sessionManager.isLoggedIn()) {
+            Log.w(TAG, "No hay ID de consulta válido para actualizar.");
             return;
         }
-        // Creamos una nueva petición indicando que se usó la voz.
-        // No incluimos la ubicación aquí para simplificar.
-        LogQueryRequest request = new LogQueryRequest(currentFruit.getCommonName(), null, true);
-        apiService.logQuery(request).enqueue(new Callback<Void>() {
+
+        apiService.updateQueryVoiceStatus(queryId).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.i(TAG, "Uso de voz registrado para: " + currentFruit.getCommonName());
+                } else {
+                    Log.e(TAG, "Error al actualizar el uso de voz. Código: " + response.code());
                 }
             }
             @Override

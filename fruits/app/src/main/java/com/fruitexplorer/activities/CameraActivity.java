@@ -27,6 +27,7 @@ import androidx.core.content.ContextCompat;
 import com.fruitexplorer.R;
 import com.fruitexplorer.api.ApiClient;
 import com.fruitexplorer.api.ApiService;
+import com.fruitexplorer.models.BaseResponse;
 import com.fruitexplorer.models.Fruit;
 import com.fruitexplorer.models.LogQueryRequest;
 import com.fruitexplorer.models.FruitResponse;
@@ -206,7 +207,6 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
                 confirmationRunnable = () -> {
                     lockedFruit = fruitName;
                     pauseDetection();
-                    logFruitQuery(fruitName, null, false); // <-- REGISTRAMOS SIN UBICACIÓN NI VOZ AÚN
                     confirmationGroup.setVisibility(View.VISIBLE);
                 };
                 // Programamos la confirmación para dentro de 1.5 segundos
@@ -227,29 +227,6 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
         }, ContextCompat.getMainExecutor(this));
     }
 
-    private void logFruitQuery(String fruitName, String location, boolean usedTTS) {
-        if (!sessionManager.isLoggedIn()) {
-            Log.w(TAG, "Usuario no logueado. No se puede registrar la consulta.");
-            return;
-        }
-
-        LogQueryRequest request = new LogQueryRequest(fruitName, location, usedTTS);
-        apiService.logQuery(request).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    Log.i(TAG, "Consulta para '" + fruitName + "' registrada. Ubicación: " + location);
-                } else {
-                    Log.e(TAG, "Error al registrar la consulta. Código: " + response.code());
-                }
-            }
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Log.e(TAG, "Fallo de red al registrar la consulta.", t);
-            }
-        });
-    }
-
     private void fetchFruitDetails(String fruitName) {
         // Primero, intentamos obtener la ubicación
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -259,29 +236,29 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
                         if (location != null) {
                             locationString = location.getLatitude() + "," + location.getLongitude();
                         }
-                        // Una vez tenemos la ubicación (o no), registramos la consulta y buscamos los detalles
-                        logFruitQuery(fruitName, locationString, false); // Aún no sabemos si usará TTS
-                        fetchFruitDetailsApiCall(fruitName);
+                        // Una vez tenemos la ubicación (o no), buscamos los detalles y pasamos la ubicación
+                        fetchFruitDetailsApiCall(fruitName, locationString);
                     })
                     .addOnFailureListener(e -> {
                         // Si falla, continuamos sin ubicación
-                        logFruitQuery(fruitName, null, false);
-                        fetchFruitDetailsApiCall(fruitName);
+                        fetchFruitDetailsApiCall(fruitName, null);
                     });
         } else {
             // Si no hay permiso, continuamos sin ubicación
-            logFruitQuery(fruitName, null, false);
-            fetchFruitDetailsApiCall(fruitName);
+            fetchFruitDetailsApiCall(fruitName, null);
         }
     }
 
-    private void fetchFruitDetailsApiCall(String fruitName) {
+    private void fetchFruitDetailsApiCall(String fruitName, String location) {
         apiService.getFruitBySlug(fruitName).enqueue(new Callback<FruitResponse>() {
             @Override
             public void onResponse(Call<FruitResponse> call, Response<FruitResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Fruit fruit = response.body().getFruit(); // <-- ¡Aquí está el cambio clave!
-                    launchFruitDetailActivity(fruit);
+
+                    // Ahora que tenemos la fruta, registramos la consulta y luego abrimos los detalles
+                    logQueryAndLaunchDetails(fruit, location);
+
                 } else {
                     Log.w(TAG, "No se encontró información para la fruta: " + fruitName + " Código: " + response.code());
                 }
@@ -295,12 +272,38 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
         });
     }
 
-    private void launchFruitDetailActivity(Fruit fruit) {
-        // Ya no necesitamos apagar el executor aquí, se controla con pause/reset
-        // isDetectionPaused ya previene múltiples lanzamientos.
+    private void logQueryAndLaunchDetails(Fruit fruit, String location) {
+        if (!sessionManager.isLoggedIn()) {
+            launchFruitDetailActivity(fruit, -1); // Lanzar sin ID de consulta
+            return;
+        }
 
+        LogQueryRequest request = new LogQueryRequest(fruit.getCommonName(), location, false);
+        apiService.logQuery(request).enqueue(new Callback<BaseResponse>() {
+            @Override
+            public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
+                long queryId = -1;
+                if (response.isSuccessful() && response.body() != null) {
+                    queryId = response.body().getQueryId();
+                    Log.i(TAG, "Consulta registrada con ID: " + queryId);
+                } else {
+                    Log.e(TAG, "Error al registrar la consulta. Código: " + response.code());
+                }
+                launchFruitDetailActivity(fruit, queryId);
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse> call, Throwable t) {
+                Log.e(TAG, "Fallo de red al registrar la consulta.", t);
+                launchFruitDetailActivity(fruit, -1); // Lanzar sin ID si la red falla
+            }
+        });
+    }
+
+    private void launchFruitDetailActivity(Fruit fruit, long queryId) {
         Intent intent = new Intent(this, FruitDetailActivity.class);
         intent.putExtra(FruitDetailActivity.EXTRA_FRUIT, fruit);
+        intent.putExtra(FruitDetailActivity.EXTRA_QUERY_ID, queryId);
         startActivity(intent);
     }
 }

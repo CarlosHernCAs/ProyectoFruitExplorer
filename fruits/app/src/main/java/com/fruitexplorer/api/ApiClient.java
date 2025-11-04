@@ -68,7 +68,7 @@ public class ApiClient {
 
             // Si el usuario está logueado, añadimos la cabecera "Authorization"
             if (sessionManager.isLoggedIn()) {
-                String token = sessionManager.getToken();
+                String token = sessionManager.fetchAuthToken();
                 if (token != null) {
                     requestBuilder.addHeader("Authorization", "Bearer " + token);
                 }

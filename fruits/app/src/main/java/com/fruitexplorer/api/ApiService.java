@@ -1,8 +1,10 @@
 package com.fruitexplorer.api;
 
 import com.fruitexplorer.models.AuthResponse;
+import com.fruitexplorer.models.BaseResponse;
 import com.fruitexplorer.models.FruitResponse;
 import com.fruitexplorer.models.LoginRequest;
+import com.fruitexplorer.models.RegionResponse;
 import com.fruitexplorer.models.LogQueryRequest;
 import com.fruitexplorer.models.RegisterRequest;
 
@@ -10,6 +12,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface ApiService {
@@ -24,6 +27,14 @@ public interface ApiService {
     Call<FruitResponse> getFruitBySlug(@Path("slug") String fruitSlug);
 
     @POST("queries/log")
-    Call<Void> logQuery(@Body LogQueryRequest logQueryRequest);
-}
+    Call<BaseResponse> logQuery(@Body LogQueryRequest logQueryRequest);
 
+    @PUT("queries/{id}/voice")
+    Call<Void> updateQueryVoiceStatus(@Path("id") long queryId);
+
+    @GET("regions")
+    Call<RegionResponse> getRegions();
+
+    @GET("regions/{id}/fruits")
+    Call<FruitResponse> getFruitsByRegion(@Path("id") int regionId);
+}
