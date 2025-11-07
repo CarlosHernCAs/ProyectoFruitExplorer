@@ -35,13 +35,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Inicializar componentes clave primero
+        apiService = ApiClient.getApiService(this);
+        sessionManager = new SessionManager(this);
+
         editTextEmail = findViewById(R.id.emailInput);
         editTextPassword = findViewById(R.id.passwordInput);
         buttonLogin = findViewById(R.id.btnLogin);
         buttonGoToRegister = findViewById(R.id.btnGoToRegister);
-
-        apiService = ApiClient.getApiService(this);
-        sessionManager = new SessionManager(this);
 
         // --- INICIO: Código de la animación ---
         ImageView logo = findViewById(R.id.logoImageView);

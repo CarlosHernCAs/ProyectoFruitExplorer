@@ -14,8 +14,8 @@ const router = Router();
 router.post('/', requireAuth, requireRole('admin'), addFruitRecipe);
 router.delete('/', requireAuth, requireRole('admin'), removeFruitRecipe);
 
-// Usuarios autenticados pueden consultar
-router.get('/by-fruit/:fruit_id', requireAuth, listRecipesByFruit);
-router.get('/by-recipe/:recipe_id', requireAuth, listFruitsByRecipe);
+// Rutas públicas para consultar asociaciones fruta-receta
+router.get('/by-fruit/:fruit_id', listRecipesByFruit);
+router.get('/by-recipe/:recipe_id', listFruitsByRecipe);
 
 export default router;

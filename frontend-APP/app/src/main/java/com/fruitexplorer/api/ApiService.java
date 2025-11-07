@@ -2,7 +2,7 @@ package com.fruitexplorer.api;
 
 import com.fruitexplorer.models.AuthResponse;
 import com.fruitexplorer.models.BaseResponse;
-import com.fruitexplorer.models.FruitResponse;
+import com.fruitexplorer.models.FruitListResponse;
 import com.fruitexplorer.models.LoginRequest;
 import com.fruitexplorer.models.RegionResponse;
 import com.fruitexplorer.models.LogQueryRequest;
@@ -13,6 +13,8 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Query;
+import com.fruitexplorer.models.FruitResponse; // Mantener para getFruitBySlug
 import retrofit2.http.Path;
 
 public interface ApiService {
@@ -36,5 +38,9 @@ public interface ApiService {
     Call<RegionResponse> getRegions();
 
     @GET("regions/{id}/fruits")
-    Call<FruitResponse> getFruitsByRegion(@Path("id") int regionId);
+    Call<FruitListResponse> getFruitsByRegion(@Path("id") int regionId);
+
+    // Nuevo método para listar/buscar todas las frutas
+    @GET("fruits")
+    Call<FruitListResponse> listFruits(@Query("q") String query);
 }

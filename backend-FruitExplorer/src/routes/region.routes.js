@@ -17,11 +17,11 @@ router.post('/', requireAuth, requireRole('admin'), createRegion);
 router.put('/:id', requireAuth, requireRole('admin'), updateRegion);
 router.delete('/:id', requireAuth, requireRole('admin'), deleteRegion);
 
-// Usuarios autenticados pueden ver las regiones
-router.get('/', requireAuth, listRegions);
-router.get('/:id', requireAuth, getRegionById);
+// Rutas públicas para ver regiones
+router.get('/', listRegions);
+router.get('/:id', getRegionById);
 
 // Ruta para obtener las frutas de una región específica
-router.get('/:id/fruits', requireAuth, getFruitsByRegion);
+router.get('/:id/fruits', getFruitsByRegion);
 
 export default router;

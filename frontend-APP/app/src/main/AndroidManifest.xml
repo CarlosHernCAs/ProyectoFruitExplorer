@@ -47,6 +47,11 @@
             android:parentActivityName=".activities.ExploreActivity"
             android:exported="false" />
 
+        <!-- ¡NUEVA DECLARACIÓN! Aquí registramos la RegionsListActivity -->
+        <activity
+            android:name=".activities.RegionsListActivity"
+            android:parentActivityName=".activities.ExploreActivity" />
+
     </application>
 
 </manifest>

@@ -32,6 +32,12 @@ public class FruitAdapter extends RecyclerView.Adapter<FruitAdapter.FruitViewHol
         this.listener = listener;
     }
 
+    public void updateData(List<Fruit> newFruitList) {
+        this.fruitList.clear();
+        this.fruitList.addAll(newFruitList);
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public FruitViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -64,8 +70,8 @@ public class FruitAdapter extends RecyclerView.Adapter<FruitAdapter.FruitViewHol
             fruitNameTextView.setText(fruit.getCommonName());
             Glide.with(itemView.getContext())
                     .load(fruit.getImageUrl())
-                    .placeholder(R.drawable.ic_launcher_background)
-                    .error(R.drawable.ic_launcher_background)
+                    .placeholder(android.R.drawable.ic_menu_gallery) // Usar un placeholder estándar y seguro
+                    .error(android.R.drawable.ic_menu_gallery)       // Usar un placeholder de error estándar
                     .into(fruitImageView);
 
             itemView.setOnClickListener(v -> listener.onFruitClick(fruit));

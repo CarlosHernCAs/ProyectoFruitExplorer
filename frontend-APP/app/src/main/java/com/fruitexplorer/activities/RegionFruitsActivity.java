@@ -13,8 +13,8 @@ import com.fruitexplorer.R;
 import com.fruitexplorer.adapters.FruitAdapter;
 import com.fruitexplorer.api.ApiClient;
 import com.fruitexplorer.api.ApiService;
-import com.fruitexplorer.models.Fruit;
-import com.fruitexplorer.models.FruitResponse;
+import com.fruitexplorer.models.Fruit; // Ya estaba importado
+import com.fruitexplorer.models.FruitListResponse; // Importar el nuevo modelo
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,20 +60,18 @@ public class RegionFruitsActivity extends AppCompatActivity implements FruitAdap
     }
 
     private void fetchFruits(int regionId) {
-        apiService.getFruitsByRegion(regionId).enqueue(new Callback<FruitResponse>() {
+        apiService.getFruitsByRegion(regionId).enqueue(new Callback<FruitListResponse>() { // Usar FruitListResponse
             @Override
-            public void onResponse(Call<FruitResponse> call, Response<FruitResponse> response) {
+            public void onResponse(Call<FruitListResponse> call, Response<FruitListResponse> response) { // Usar FruitListResponse
                 if (response.isSuccessful() && response.body() != null && response.body().getFruits() != null) {
-                    fruitList.clear();
-                    fruitList.addAll(response.body().getFruits());
-                    fruitAdapter.notifyDataSetChanged();
+                    fruitAdapter.updateData(response.body().getFruits());
                 } else {
                     // Si la respuesta no es exitosa (ej. 404) o no hay frutas, mostramos un mensaje.
                     Toast.makeText(RegionFruitsActivity.this, "No se encontraron frutas para esta región.", Toast.LENGTH_LONG).show();
                 }
             }
             @Override
-            public void onFailure(Call<FruitResponse> call, Throwable t) {
+            public void onFailure(Call<FruitListResponse> call, Throwable t) { // Usar FruitListResponse
                 Log.e(TAG, "Error de red al cargar frutas: ", t);
             }
         });

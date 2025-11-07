@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class Fruit implements Parcelable {
@@ -25,7 +24,7 @@ public class Fruit implements Parcelable {
     private String imageUrl;
 
     @SerializedName("nutritional") // Corregido para coincidir con la columna 'nutritional' de la BD
-    private JsonObject nutritionalData;
+    private String nutritionalDataString;
 
     protected Fruit(Parcel in) {
         id = in.readInt();
@@ -33,10 +32,7 @@ public class Fruit implements Parcelable {
         scientificName = in.readString();
         description = in.readString();
         imageUrl = in.readString();
-        String nutritionalString = in.readString();
-        if (nutritionalString != null) {
-            nutritionalData = new JsonParser().parse(nutritionalString).getAsJsonObject();
-        }
+        nutritionalDataString = in.readString();
     }
 
     @Override
@@ -46,7 +42,7 @@ public class Fruit implements Parcelable {
         dest.writeString(scientificName);
         dest.writeString(description);
         dest.writeString(imageUrl);
-        dest.writeString(nutritionalData != null ? nutritionalData.toString() : null);
+        dest.writeString(nutritionalDataString);
     }
 
     @Override
@@ -83,8 +79,11 @@ public class Fruit implements Parcelable {
         return description;
     }
 
-    public JsonObject getNutritionalData() {
-        return nutritionalData;
+    public com.google.gson.JsonObject getNutritionalData() {
+        if (nutritionalDataString == null || nutritionalDataString.isEmpty()) {
+            return new com.google.gson.JsonObject();
+        }
+        return new JsonParser().parse(nutritionalDataString).getAsJsonObject();
     }
 
     public String getImageUrl() {

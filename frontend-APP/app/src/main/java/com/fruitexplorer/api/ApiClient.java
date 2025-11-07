@@ -17,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiClient {
 
     // Cambia esta IP por la de tu máquina si pruebas en un dispositivo físico
-    private static final String BASE_URL = "http://192.168.0.106:4000/api/";
+    private static final String BASE_URL = "http://192.168.0.105:4000/api/";
     private static Retrofit retrofit = null;
     private static ApiService apiService = null;
 
