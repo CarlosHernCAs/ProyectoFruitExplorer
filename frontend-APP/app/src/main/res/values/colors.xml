@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="textColorPrimary">#212121</color>
-    <color name="textColorSecondary">#757575</color>
-    <color name="backgroundColor">#F5F5F5</color>
-    <color name="cardBackgroundColor">#FFFFFF</color>
-    <color name="iconColor">#2E7D32</color>
-    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorPrimary">#4CAF50</color> <!-- Green -->
+    <color name="colorPrimaryVariant">#388E3C</color> <!-- Darker Green -->
+    <color name="colorOnPrimary">#FFFFFF</color> <!-- White -->
+    <color name="colorSecondary">#FF9800</color> <!-- Orange -->
+    <color name="colorSecondaryVariant">#F57C00</color> <!-- Darker Orange -->
+    <color name="colorOnSecondary">#212121</color> <!-- Dark Gray -->
+    <color name="backgroundColor">#E8F5E9</color> <!-- Very Light Green -->
+    <color name="cardBackgroundColor">#FFFFFF</color> <!-- White -->
+    <color name="textColorPrimary">#212121</color> <!-- Dark Gray -->
+    <color name="textColorSecondary">#757575</color> <!-- Medium Gray -->
+    <color name="iconColor">#4CAF50</color> <!-- Green -->
+    <color name="cameraButtonColor">#2196F3</color> <!-- Blue for Camera Button -->
 </resources>

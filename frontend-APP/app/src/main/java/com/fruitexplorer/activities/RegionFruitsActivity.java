@@ -80,7 +80,7 @@ public class RegionFruitsActivity extends AppCompatActivity implements FruitAdap
     @Override
     public void onFruitClick(Fruit fruit) {
         Intent intent = new Intent(this, FruitDetailActivity.class);
-        intent.putExtra(FruitDetailActivity.EXTRA_FRUIT, fruit);
+        intent.putExtra(FruitDetailActivity.EXTRA_FRUIT_SLUG, fruit.getSlug());
         startActivity(intent);
     }
 

@@ -7,6 +7,8 @@ import com.fruitexplorer.models.LoginRequest;
 import com.fruitexplorer.models.RegionResponse;
 import com.fruitexplorer.models.LogQueryRequest;
 import com.fruitexplorer.models.RegisterRequest;
+import com.fruitexplorer.models.RecipeListResponse;
+
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -43,4 +45,8 @@ public interface ApiService {
     // Nuevo método para listar/buscar todas las frutas
     @GET("fruits")
     Call<FruitListResponse> listFruits(@Query("q") String query);
+
+    // Nuevo método para obtener recetas por fruta
+    @GET("fruits/{id}/recipes")
+    Call<RecipeListResponse> getRecipesByFruit(@Path("id") int fruitId);
 }

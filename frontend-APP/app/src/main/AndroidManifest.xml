@@ -37,7 +37,7 @@
         <activity android:name=".activities.LoginActivity" android:exported="false" />
         <activity android:name=".activities.RegisterActivity" android:exported="false" />
         <activity android:name=".activities.WelcomeActivity" android:exported="false" />
-        <activity android:name=".activities.ExploreActivity" android:exported="false" />
+        <activity android:name=".activities.ExploreActivity" android:exported="false" android:windowSoftInputMode="adjustPan" />
         <activity android:name=".activities.CameraActivity" />
         <activity android:name=".activities.RegionFruitsActivity" android:parentActivityName=".activities.ExploreActivity" />
 

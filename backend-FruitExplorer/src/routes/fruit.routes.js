@@ -9,6 +9,7 @@ import {
   markSynced
 } from '../controllers/fruit.controller.js';
 import { requireAuth } from '../middlewares/auth.middleware.js';
+import { listRecipesByFruit } from '../controllers/fruitRecipe.controller.js';
 import { requireRole } from '../middlewares/role.middleware.js';
 
 const router = Router();
@@ -17,6 +18,9 @@ const router = Router();
 router.get('/', listFruits);
 router.get('/slug/:slug', getFruitBySlug);
 router.get('/:id', getFruitById);
+// Nueva ruta para obtener las recetas de una fruta
+// Usa el controlador de fruitRecipe, pero se accede desde la ruta de la fruta
+router.get('/:id/recipes', listRecipesByFruit);
 
 // Protected admin
 router.post('/', requireAuth, requireRole('admin'), createFruit);

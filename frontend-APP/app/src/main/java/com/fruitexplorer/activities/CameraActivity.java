@@ -278,7 +278,7 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
             return;
         }
 
-        LogQueryRequest request = new LogQueryRequest(fruit.getCommonName(), location, false);
+        LogQueryRequest request = new LogQueryRequest(fruit.getSlug(), location, false);
         apiService.logQuery(request).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
@@ -302,7 +302,7 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
 
     private void launchFruitDetailActivity(Fruit fruit, long queryId) {
         Intent intent = new Intent(this, FruitDetailActivity.class);
-        intent.putExtra(FruitDetailActivity.EXTRA_FRUIT, fruit);
+        intent.putExtra(FruitDetailActivity.EXTRA_FRUIT_SLUG, fruit.getSlug());
         intent.putExtra(FruitDetailActivity.EXTRA_QUERY_ID, queryId);
         startActivity(intent);
     }

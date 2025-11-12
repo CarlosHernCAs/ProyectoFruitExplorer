@@ -36,7 +36,7 @@ public class SessionManager {
         editor.commit();
     }
 
-    public String fetchAuthToken() {
+    public String getToken() {
         return sharedPreferences.getString(KEY_AUTH_TOKEN, null);
     }
 

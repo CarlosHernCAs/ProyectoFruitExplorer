@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">fruits</string>
+    <string name="app_name">Fruits Explorer</string>
+    <string name="explore_no_fruits_found">No se encontraron frutas</string>
+    <string name="explore_search_hint">Buscar frutas...</string>
+    <string name="fruit_image_description">Imagen de la fruta</string>
+    <string name="regions_title">Regiones</string>
+    <string name="recipes_title">Recetas</string>
+    <string name="camera_title">Cámara</string>
+    <string name="map_title">Mapa</string>
+    <string name="search_title">Buscar</string>
+    <string name="coming_soon_recipes">Próximamente: Lista de Recetas</string>
+    <string name="identify_fruit">Identificar fruta</string>
 </resources>

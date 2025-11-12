@@ -3,12 +3,12 @@
 
     <item
         android:id="@+id/navigation_regions"
-        android:icon="@android:drawable/ic_menu_mapmode"
+        android:icon="@drawable/ic_leaf"
         android:title="Regiones" />
 
     <item
         android:id="@+id/navigation_recipes"
-        android:icon="@android:drawable/ic_menu_slideshow"
+        android:icon="@drawable/ic_book"
         android:title="Recetas" />
 
 </menu>
