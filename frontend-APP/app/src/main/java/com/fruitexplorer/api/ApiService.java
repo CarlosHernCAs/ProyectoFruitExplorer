@@ -49,4 +49,8 @@ public interface ApiService {
     // Nuevo método para obtener recetas por fruta
     @GET("fruits/{id}/recipes")
     Call<RecipeListResponse> getRecipesByFruit(@Path("id") int fruitId);
+
+    // ▼▼▼ MÉTODO FALTANTE ▼▼▼
+    @GET("recipes")
+    Call<RecipeListResponse> getRecipes();
 }

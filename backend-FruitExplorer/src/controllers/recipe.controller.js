@@ -22,7 +22,7 @@ export const listRecipes = async (req, res) => {
     params.push(Number(limit), Number(offset));
 
     const [rows] = await pool.query(query, params);
-    res.status(200).json({ recetas: rows });
+    res.status(200).json({ recipes: rows });
   } catch (err) {
     console.error(err);
     res.status(500).json({ mensaje: 'Error al listar recetas' });

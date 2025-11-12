@@ -64,7 +64,7 @@ public class RegionFruitsActivity extends AppCompatActivity implements FruitAdap
             @Override
             public void onResponse(Call<FruitListResponse> call, Response<FruitListResponse> response) { // Usar FruitListResponse
                 if (response.isSuccessful() && response.body() != null && response.body().getFruits() != null) {
-                    fruitAdapter.updateData(response.body().getFruits());
+                    fruitAdapter.updateFruits(response.body().getFruits());
                 } else {
                     // Si la respuesta no es exitosa (ej. 404) o no hay frutas, mostramos un mensaje.
                     Toast.makeText(RegionFruitsActivity.this, "No se encontraron frutas para esta región.", Toast.LENGTH_LONG).show();

@@ -61,7 +61,7 @@ public class RegionsListActivity extends AppCompatActivity implements RegionAdap
             @Override
             public void onResponse(Call<RegionResponse> call, Response<RegionResponse> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getRegions() != null) {
-                    regionAdapter.updateData(response.body().getRegions());
+                    regionAdapter.updateRegions(response.body().getRegions());
                 } else {
                     Toast.makeText(RegionsListActivity.this, "No se pudieron cargar las regiones.", Toast.LENGTH_LONG).show();
                 }

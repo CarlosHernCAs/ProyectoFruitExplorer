@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class FruitListResponse {
-
-    @SerializedName("frutas") // Clave correcta que coincide con el backend
+    // Corregimos la clave para que coincida con la respuesta estandarizada del backend
+    @SerializedName("fruits")
     private List<Fruit> fruits;
 
     public List<Fruit> getFruits() {

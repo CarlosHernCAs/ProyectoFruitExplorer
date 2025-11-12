@@ -32,7 +32,7 @@ public class FruitAdapter extends RecyclerView.Adapter<FruitAdapter.FruitViewHol
         this.listener = listener;
     }
 
-    public void updateData(List<Fruit> newFruitList) {
+    public void updateFruits(List<Fruit> newFruitList) {
         this.fruitList.clear();
         this.fruitList.addAll(newFruitList);
         notifyDataSetChanged();
@@ -58,16 +58,22 @@ public class FruitAdapter extends RecyclerView.Adapter<FruitAdapter.FruitViewHol
 
     static class FruitViewHolder extends RecyclerView.ViewHolder {
         ImageView fruitImageView;
-        TextView fruitNameTextView;
+        TextView fruitCommonNameTextView;
+        TextView fruitScientificNameTextView;
 
         public FruitViewHolder(@NonNull View itemView) {
             super(itemView);
             fruitImageView = itemView.findViewById(R.id.fruitImageView);
-            fruitNameTextView = itemView.findViewById(R.id.fruitNameTextView);
+            // Corregimos los IDs para que coincidan con los de item_fruit.xml
+            fruitCommonNameTextView = itemView.findViewById(R.id.fruitCommonNameTextView);
+            fruitScientificNameTextView = itemView.findViewById(R.id.fruitScientificNameTextView);
         }
 
         public void bind(final Fruit fruit, final OnFruitClickListener listener) {
-            fruitNameTextView.setText(fruit.getCommonName());
+            // Asignamos los textos a las vistas correctas
+            fruitCommonNameTextView.setText(fruit.getCommonName());
+            fruitScientificNameTextView.setText(fruit.getScientificName());
+
             Glide.with(itemView.getContext())
                     .load(fruit.getImageUrl())
                     .placeholder(android.R.drawable.ic_menu_gallery) // Usar un placeholder estándar y seguro

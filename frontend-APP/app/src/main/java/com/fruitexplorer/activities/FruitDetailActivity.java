@@ -1,11 +1,13 @@
 package com.fruitexplorer.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,7 +16,6 @@ import com.bumptech.glide.Glide;
 import com.fruitexplorer.R;
 import com.fruitexplorer.adapters.RecipeAdapter;
 import com.fruitexplorer.api.ApiClient;
-import com.fruitexplorer.api.ApiService;
 import com.fruitexplorer.models.Fruit;
 import com.fruitexplorer.models.LogQueryRequest;
 import com.fruitexplorer.utils.SessionManager;
@@ -42,8 +43,8 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
 
     private TextToSpeech textToSpeech;
     private FloatingActionButton fabSpeak;
-    private Fruit currentFruit;
-    private ApiService apiService;
+    private Fruit currentFruit; // <<< DECLARACIÓN FALTANTE
+    private com.fruitexplorer.api.ApiService apiService;
     private SessionManager sessionManager;
     private long queryId = -1;
 
@@ -110,7 +111,6 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
     }
 
     private void fetchFruitDetails(String slug) {
-        // Aquí podrías mostrar un ProgressBar
         apiService.getFruitBySlug(slug).enqueue(new Callback<FruitResponse>() {
             @Override
             public void onResponse(Call<FruitResponse> call, Response<FruitResponse> response) {
@@ -155,6 +155,8 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
         // Formatear y mostrar los datos nutricionales
         nutritionalDataTextView.setText(formatNutritionalData(currentFruit.getNutritionalData()));
 
+        fabSpeak.setVisibility(View.VISIBLE); // Mostramos el botón de hablar
+
         // Configurar RecyclerView para recetas
         setupRecyclerView();
 
@@ -165,8 +167,10 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
     private void setupRecyclerView() {
         recipesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         recipeAdapter = new RecipeAdapter(this, new ArrayList<Recipe>(), recipe -> {
-            // Aquí puedes manejar el clic en una receta, por ejemplo, abrir otra actividad con los detalles de la receta.
-            Toast.makeText(this, "Receta seleccionada: " + recipe.getTitle(), Toast.LENGTH_SHORT).show();
+            // Al hacer clic en una receta, abrimos su pantalla de detalle
+            Intent intent = new Intent(this, RecipeDetailActivity.class);
+            intent.putExtra(RecipeDetailActivity.EXTRA_RECIPE, recipe);
+            startActivity(intent);
         });
         recipesRecyclerView.setAdapter(recipeAdapter);
     }
@@ -175,7 +179,8 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
         apiService.getRecipesByFruit(fruitId).enqueue(new Callback<RecipeListResponse>() {
             @Override
             public void onResponse(Call<RecipeListResponse> call, Response<RecipeListResponse> response) {
-                if (response.isSuccessful() && response.body() != null && !response.body().getRecipes().isEmpty()) {
+                // Añadimos una comprobación para evitar el NullPointerException
+                if (response.isSuccessful() && response.body() != null && response.body().getRecipes() != null && !response.body().getRecipes().isEmpty()) {
                     recipesTitleTextView.setVisibility(TextView.VISIBLE);
                     recipesRecyclerView.setVisibility(RecyclerView.VISIBLE);
                     // Usar un ícono existente para el título de recetas
@@ -223,8 +228,7 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e(TAG, "El idioma español no está soportado en este dispositivo.");
             } else {
-                // Usar un ícono existente para el botón de hablar
-                fabSpeak.setImageResource(android.R.drawable.ic_btn_speak_now);
+                fabSpeak.setImageResource(android.R.drawable.ic_btn_speak_now); // Ícono estándar
                 fabSpeak.setEnabled(true); // Habilitar el botón una vez que TTS esté listo
             }
         } else {
@@ -242,6 +246,7 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
     }
 
     private void logVoiceUsage() {
+        // Esta función ya no se usa aquí, pero la dejamos por si se reutiliza
         if (queryId == -1 || !sessionManager.isLoggedIn()) {
             Log.w(TAG, "No hay ID de consulta válido para actualizar.");
             return;

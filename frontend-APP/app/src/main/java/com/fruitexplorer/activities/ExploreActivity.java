@@ -168,10 +168,11 @@ public class ExploreActivity extends AppCompatActivity implements FruitAdapter.O
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.navigation_regions) {
-                startActivity(new Intent(this, RegionsListActivity.class));
+                startActivity(new Intent(this, RegionsActivity.class)); // Esto ya está correcto, solo confirmamos.
                 return true;
             } else if (itemId == R.id.navigation_recipes) {
-                Toast.makeText(this, "Próximamente: Lista de Recetas", Toast.LENGTH_SHORT).show();
+                // Cambiamos el Toast para iniciar la actividad de recetas
+                startActivity(new Intent(this, RecipesActivity.class));
                 return true;
             }
             return false;
@@ -204,7 +205,7 @@ public class ExploreActivity extends AppCompatActivity implements FruitAdapter.O
                 if (response.isSuccessful() && response.body() != null && response.body().getFruits() != null) {
                     currentFruits.clear();
                     currentFruits.addAll(response.body().getFruits());
-                    fruitAdapter.updateData(currentFruits);
+                    fruitAdapter.updateFruits(currentFruits);
 
                     if (currentFruits.isEmpty()) {
                         showEmptyState("No se encontraron frutas.", R.drawable.ic_leaf);

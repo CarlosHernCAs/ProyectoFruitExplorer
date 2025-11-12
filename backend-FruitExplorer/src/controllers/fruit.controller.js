@@ -6,8 +6,9 @@ export const listFruits = async (req, res) => {
     const { region, q, page = 1, limit = 20 } = req.query;
     const offset = (page - 1) * limit;
 
+    // CORRECCIÓN: Se añade f.nutritional a la consulta
     let baseQuery = `SELECT f.id, f.slug, f.common_name, f.scientific_name,
-                            f.description, f.image_url, f.source_api_url, f.last_synced_at, f.created_at
+                            f.description, f.image_url, f.source_api_url, f.last_synced_at, f.created_at, f.nutritional
                      FROM fruits f`;
     const params = [];
 
@@ -32,7 +33,21 @@ export const listFruits = async (req, res) => {
     params.push(Number(limit), Number(offset));
 
     const [rows] = await pool.query(baseQuery + where + limitOffset, params);
-    res.status(200).json({ frutas: rows });
+
+    // CORRECCIÓN: Parsear el campo 'nutritional' para cada fruta en la lista
+    const fruitsWithParsedNutritional = rows.map(fruit => {
+      if (fruit.nutritional) {
+        try {
+          fruit.nutritional = JSON.parse(fruit.nutritional);
+        } catch (e) {
+          console.error(`Error parsing nutritional data for fruit ID ${fruit.id}:`, e);
+          fruit.nutritional = null; // Asignar null si el parseo falla
+        }
+      }
+      return fruit;
+    });
+
+    res.status(200).json({ fruits: fruitsWithParsedNutritional });
   } catch (err) {
     console.error('Error listFruits', err);
     res.status(500).json({ mensaje: 'Error al obtener frutas' });
@@ -54,9 +69,15 @@ export const getFruitById = async (req, res) => {
 
     const fruitData = rows[0];
     if (fruitData.nutritional) {
-      fruitData.nutritional = JSON.parse(fruitData.nutritional);
+      try {
+        fruitData.nutritional = JSON.parse(fruitData.nutritional);
+      } catch(e) {
+        console.error(`Error parsing nutritional data for fruit ID ${fruitData.id}:`, e);
+        fruitData.nutritional = null;
+      }
     }
-    res.status(200).json({ fruta: fruitData });
+    // CORRECCIÓN: Se cambia la clave de "fruta" a "fruit"
+    res.status(200).json({ fruit: fruitData });
   } catch (err) {
     console.error('Error getFruitById', err);
     res.status(500).json({ mensaje: 'Error al obtener la fruta' });
@@ -76,12 +97,17 @@ export const getFruitBySlug = async (req, res) => {
 
     if (rows.length === 0) return res.status(404).json({ mensaje: 'Fruta no encontrada' });
 
-    // Parsear el campo 'nutritional' de string a JSON antes de enviar
     const fruitData = rows[0];
     if (fruitData.nutritional) {
-      fruitData.nutritional = JSON.parse(fruitData.nutritional);
+      try {
+        fruitData.nutritional = JSON.parse(fruitData.nutritional);
+      } catch(e) {
+        console.error(`Error parsing nutritional data for fruit slug ${fruitData.slug}:`, e);
+        fruitData.nutritional = null;
+      }
     }
-    res.status(200).json({ fruta: fruitData });
+    // CORRECCIÓN: Se cambia la clave de "fruta" a "fruit"
+    res.status(200).json({ fruit: fruitData });
   } catch (err) {
     console.error('Error getFruitBySlug', err);
     res.status(500).json({ mensaje: 'Error al obtener la fruta' });
@@ -109,7 +135,8 @@ export const createFruit = async (req, res) => {
     const insertId = result.insertId;
     const [newRow] = await pool.query('SELECT * FROM fruits WHERE id = ?', [insertId]);
 
-    res.status(201).json({ mensaje: 'Fruta creada', fruta: newRow[0] });
+    // CORRECCIÓN: Se cambia la clave de "fruta" a "fruit"
+    res.status(201).json({ mensaje: 'Fruta creada', fruit: newRow[0] });
   } catch (err) {
     console.error('Error createFruit', err);
     res.status(500).json({ mensaje: 'Error al crear la fruta' });
@@ -141,7 +168,8 @@ export const updateFruit = async (req, res) => {
     if (result.affectedRows === 0) return res.status(404).json({ mensaje: 'Fruta no encontrada' });
 
     const [rows] = await pool.query('SELECT * FROM fruits WHERE id = ?', [id]);
-    res.status(200).json({ mensaje: 'Fruta actualizada', fruta: rows[0] });
+    // CORRECCIÓN: Se cambia la clave de "fruta" a "fruit"
+    res.status(200).json({ mensaje: 'Fruta actualizada', fruit: rows[0] });
   } catch (err) {
     console.error('Error updateFruit', err);
     res.status(500).json({ mensaje: 'Error al actualizar la fruta' });

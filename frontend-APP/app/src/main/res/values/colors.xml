@@ -12,4 +12,13 @@
     <color name="textColorSecondary">#757575</color> <!-- Medium Gray -->
     <color name="iconColor">#4CAF50</color> <!-- Green -->
     <color name="cameraButtonColor">#2196F3</color> <!-- Blue for Camera Button -->
+    <!-- Colores existentes -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+        <!-- ▼▼▼ AÑADE ESTOS COLORES FALTANTES ▼▼▼ -->
+    <color name="app_background">#FFFFFF</color> <!-- Un color de fondo, por ejemplo, blanco -->
+    <color name="primary_text">#212121</color>   <!-- Un color de texto primario, por ejemplo, gris oscuro -->
+        <!-- ▲▲▲ FIN DE LOS COLORES AÑADIDOS ▲▲▲ -->
+
 </resources>

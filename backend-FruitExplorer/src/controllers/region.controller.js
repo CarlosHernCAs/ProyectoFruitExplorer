@@ -35,7 +35,7 @@ export const listRegions = async (req, res) => {
     const [rows] = await pool.query(
       'SELECT id, name, description, image_url, geo_polygon FROM regions ORDER BY name ASC'
     );
-    res.status(200).json({ regiones: rows });
+    res.status(200).json({ regions: rows });
   } catch (err) {
     console.error(err);
     res.status(500).json({ mensaje: 'Error al listar las regiones' });
@@ -111,7 +111,15 @@ export const getFruitsByRegion = async (req, res) => {
 
     if (rows.length === 0) return res.status(404).json({ mensaje: 'No se encontraron frutas para esta región o la región no existe.' });
 
-    res.status(200).json({ frutas: rows }); // Cambiamos "fruta" por "frutas"
+    // Parsear el campo 'nutritional' de string a JSON para cada fruta antes de enviar
+    const fruitsWithParsedNutritional = rows.map(fruit => {
+      if (fruit.nutritional) {
+        fruit.nutritional = JSON.parse(fruit.nutritional);
+      }
+      return fruit;
+    });
+
+    res.status(200).json({ fruits: fruitsWithParsedNutritional });
   } catch (err) {
     console.error(err);
     res.status(500).json({ mensaje: 'Error al obtener las frutas de la región' });

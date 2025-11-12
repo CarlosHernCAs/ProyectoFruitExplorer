@@ -11,7 +11,7 @@
     <uses-feature android:name="android.permission.CAMERA" android:required="true" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -47,10 +47,22 @@
             android:parentActivityName=".activities.ExploreActivity"
             android:exported="false" />
 
-        <!-- ¡NUEVA DECLARACIÓN! Aquí registramos la RegionsListActivity -->
+        <!-- Declaraciones de las nuevas actividades de Regiones y Recetas -->
         <activity
-            android:name=".activities.RegionsListActivity"
+            android:name=".activities.RegionsActivity"
             android:parentActivityName=".activities.ExploreActivity" />
+
+        <activity
+            android:name=".activities.RegionDetailActivity"
+            android:parentActivityName=".activities.RegionsActivity" />
+
+        <activity
+            android:name=".activities.RecipesActivity"
+            android:parentActivityName=".activities.ExploreActivity" />
+
+        <activity
+            android:name=".activities.RecipeDetailActivity"
+            android:parentActivityName=".activities.RecipesActivity" />
 
     </application>
 

@@ -32,7 +32,7 @@ public class RegionAdapter extends RecyclerView.Adapter<RegionAdapter.RegionView
         this.listener = listener;
     }
 
-    public void updateData(List<Region> newRegionList) {
+    public void updateRegions(List<Region> newRegionList) {
         this.regionList.clear();
         this.regionList.addAll(newRegionList);
         notifyDataSetChanged();
@@ -41,7 +41,7 @@ public class RegionAdapter extends RecyclerView.Adapter<RegionAdapter.RegionView
     @NonNull
     @Override
     public RegionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.list_item_region, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_region, parent, false);
         return new RegionViewHolder(view);
     }
 
