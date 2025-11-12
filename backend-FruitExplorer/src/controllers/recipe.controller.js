@@ -6,19 +6,25 @@ export const listRecipes = async (req, res) => {
     const { q, page = 1, limit = 20 } = req.query;
     const offset = (page - 1) * limit;
 
+    // CORRECCIÓN: Hacemos la consulta más potente para buscar también por nombre de fruta.
     let query = `
-      SELECT id, title, description, source, image_url
-      FROM recipes
+      SELECT DISTINCT r.id, r.title, r.description, r.source, r.image_url
+      FROM recipes r
     `;
     const params = [];
 
     if (q) {
-      query += ' WHERE title LIKE ? OR description LIKE ?';
+      // Si hay un término de búsqueda, unimos las tablas para poder buscar en los nombres de las frutas.
+      query += `
+        LEFT JOIN fruit_recipes fr ON r.id = fr.recipe_id
+        LEFT JOIN fruits f ON fr.fruit_id = f.id
+      `;
+      query += ' WHERE r.title LIKE ? OR r.description LIKE ? OR f.common_name LIKE ?';
       const like = `%${q}%`;
-      params.push(like, like);
+      params.push(like, like, like);
     }
 
-    query += ' ORDER BY title ASC LIMIT ? OFFSET ?';
+    query += ' ORDER BY r.title ASC LIMIT ? OFFSET ?';
     params.push(Number(limit), Number(offset));
 
     const [rows] = await pool.query(query, params);

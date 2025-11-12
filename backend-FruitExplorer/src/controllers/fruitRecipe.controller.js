@@ -24,7 +24,8 @@ export const addFruitRecipe = async (req, res) => {
 // Listar recetas asociadas a una fruta
 export const listRecipesByFruit = async (req, res) => {
   try {
-    const { fruit_id } = req.params;
+    // CORRECCIÓN: El parámetro de la ruta es 'id', no 'fruit_id'.
+    const { id } = req.params;
 
     const [rows] = await pool.query(
       `SELECT r.id, r.title, r.description, r.image_url
@@ -32,10 +33,10 @@ export const listRecipesByFruit = async (req, res) => {
        JOIN fruit_recipes fr ON r.id = fr.recipe_id
        WHERE fr.fruit_id = ?
        ORDER BY r.title ASC`,
-      [fruit_id]
+      [id] // Usamos el parámetro 'id' correcto.
     );
 
-    res.status(200).json({ recetas: rows });
+    res.status(200).json({ recipes: rows }); // CORRECCIÓN: Devolvemos la clave "recipes" para coincidir con el frontend.
   } catch (err) {
     console.error(err);
     res.status(500).json({ mensaje: 'Error al obtener recetas por fruta' });

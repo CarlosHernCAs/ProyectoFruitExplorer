@@ -30,4 +30,5 @@ router.delete('/:id', requireAuth, requireRole('admin'), deleteFruit);
 // Sync endpoint
 router.post('/:id/sync', requireAuth, requireRole('admin'), markSynced);
 
+
 export default router;

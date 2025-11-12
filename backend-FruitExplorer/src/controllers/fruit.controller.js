@@ -210,3 +210,24 @@ export const markSynced = async (req, res) => {
     res.status(500).json({ mensaje: 'Error al actualizar sincronización' });
   }
 };
+
+// Obtener todas las recetas de una fruta específica
+export const getRecipesByFruit = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [rows] = await pool.query(
+      `SELECT r.id, r.title, r.description, r.source, r.image_url
+       FROM recipes r
+       INNER JOIN fruit_recipes fr ON r.id = fr.recipe_id
+       WHERE fr.fruit_id = ?
+       ORDER BY r.title ASC`,
+      [id]
+    );
+
+    // Devolvemos la clave "recipes" para que coincida con el modelo RecipeListResponse de Android
+    res.status(200).json({ recipes: rows });
+  } catch (err) {
+    console.error('Error getRecipesByFruit', err);
+    res.status(500).json({ mensaje: 'Error al obtener las recetas de la fruta' });
+  }
+};

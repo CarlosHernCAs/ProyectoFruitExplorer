@@ -2,11 +2,16 @@ package com.fruitexplorer.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +35,8 @@ public class RecipesActivity extends AppCompatActivity {
     private RecipeAdapter recipeAdapter;
     private ApiService apiService;
     private ProgressBar progressBar;
+    // Handler para el retraso en la búsqueda (debounce)
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +53,33 @@ public class RecipesActivity extends AppCompatActivity {
         apiService = ApiClient.getApiService(this);
 
         setupRecyclerView();
-        fetchRecipes();
+        fetchRecipes(null); // Cargar todas las recetas al inicio
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_menu, menu); // Reutilizamos un menú de búsqueda genérico
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                handler.removeCallbacksAndMessages(null);
+                fetchRecipes(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                handler.removeCallbacksAndMessages(null);
+                handler.postDelayed(() -> fetchRecipes(newText), 300); // 300ms de retraso
+                return true;
+            }
+        });
+
+        return true;
     }
 
     private void setupRecyclerView() {
@@ -59,13 +92,14 @@ public class RecipesActivity extends AppCompatActivity {
         recyclerView.setAdapter(recipeAdapter);
     }
 
-    private void fetchRecipes() {
+    private void fetchRecipes(String query) {
         progressBar.setVisibility(View.VISIBLE);
-        apiService.getRecipes().enqueue(new Callback<RecipeListResponse>() {
+        String actualQuery = (query != null && !query.trim().isEmpty()) ? query.trim() : null;
+        apiService.getRecipes(actualQuery).enqueue(new Callback<RecipeListResponse>() {
             @Override
             public void onResponse(Call<RecipeListResponse> call, Response<RecipeListResponse> response) {
                 progressBar.setVisibility(View.GONE);
-                if (response.isSuccessful() && response.body() != null) {
+                if (response.isSuccessful() && response.body() != null && response.body().getRecipes() != null) {
                     recipeAdapter.updateRecipes(response.body().getRecipes());
                 } else {
                     Toast.makeText(RecipesActivity.this, "Error al cargar las recetas.", Toast.LENGTH_SHORT).show();

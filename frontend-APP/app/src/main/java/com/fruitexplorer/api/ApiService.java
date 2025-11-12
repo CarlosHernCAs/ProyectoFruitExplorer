@@ -52,5 +52,5 @@ public interface ApiService {
 
     // ▼▼▼ MÉTODO FALTANTE ▼▼▼
     @GET("recipes")
-    Call<RecipeListResponse> getRecipes();
+    Call<RecipeListResponse> getRecipes(@Query("q") String query);
 }

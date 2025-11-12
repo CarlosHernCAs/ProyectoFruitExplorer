@@ -18,16 +18,20 @@ public class AuthInterceptor implements Interceptor {
     @NonNull
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
-        Request.Builder requestBuilder = chain.request().newBuilder();
+        Request originalRequest = chain.request();
+        Request.Builder requestBuilder = originalRequest.newBuilder();
+        String path = originalRequest.url().encodedPath();
 
-        // Si el usuario está logueado, añadimos el token a la cabecera
-        if (sessionManager.isLoggedIn()) {
+        // CORRECCIÓN: Solo añadimos el token si el usuario está logueado
+        // Y si la ruta NO es de registro o login.
+        if (sessionManager.isLoggedIn() && !path.endsWith("/register") && !path.endsWith("/login")) {
             String token = sessionManager.getToken();
             if (token != null) {
                 requestBuilder.addHeader("Authorization", "Bearer " + token);
             }
         }
 
+        // Continuamos con la petición, ya sea la original o la modificada con el token.
         return chain.proceed(requestBuilder.build());
     }
 }

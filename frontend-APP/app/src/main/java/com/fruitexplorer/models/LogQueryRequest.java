@@ -1,22 +1,16 @@
 package com.fruitexplorer.models;
 
-import com.google.gson.annotations.SerializedName;
-
 public class LogQueryRequest {
+    private final String fruitName;
+    private final String location;
+    private final Float confidence;
+    private final Integer modelId;
 
-    @SerializedName("fruitName")
-    private String fruitName;
-
-    @SerializedName("location")
-    private String location;
-
-    @SerializedName("usedTextToSpeech")
-    private boolean usedTextToSpeech;
-
-
-    public LogQueryRequest(String fruitName, String location, boolean usedTextToSpeech) {
+    public LogQueryRequest(String fruitName, String location, Float confidence, Integer modelId) {
         this.fruitName = fruitName;
         this.location = location;
-        this.usedTextToSpeech = usedTextToSpeech;
+        this.confidence = confidence;
+        this.modelId = modelId;
     }
 }
+

@@ -14,8 +14,8 @@ const router = Router();
 router.post('/', requireAuth, requireRole('admin'), addFruitRecipe);
 router.delete('/', requireAuth, requireRole('admin'), removeFruitRecipe);
 
-// Rutas públicas para consultar asociaciones fruta-receta
-router.get('/by-fruit/:fruit_id', listRecipesByFruit);
+// Esta ruta ahora es manejada por /api/fruits/:id/recipes para seguir un mejor patrón REST.
+// router.get('/by-fruit/:fruit_id', listRecipesByFruit); 
 router.get('/by-recipe/:recipe_id', listFruitsByRecipe);
 
 export default router;

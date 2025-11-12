@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -52,13 +54,15 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
     private ImageView fruitImageView;
     private TextView commonNameTextView;
     private TextView scientificNameTextView;
-    private TextView descriptionTextView;
-    private TextView nutritionalDataTextView;
+    private TextView descriptionTextView; // <<< AÑADIMOS ESTA VISTA
     private RecyclerView recipesRecyclerView;
     private RecipeAdapter recipeAdapter;
     private TextView recipesTitleTextView;
     private CollapsingToolbarLayout collapsingToolbar;
     private View contentLayout; // El NestedScrollView o el layout principal
+    private GridLayout nutritionalGridLayout;
+    private View nutritionalCard;
+    private View recipesCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,13 +105,15 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
         fruitImageView = findViewById(R.id.fruitImageView);
         commonNameTextView = findViewById(R.id.commonNameTextView);
         scientificNameTextView = findViewById(R.id.scientificNameTextView);
-        descriptionTextView = findViewById(R.id.descriptionTextView);
-        nutritionalDataTextView = findViewById(R.id.nutritionalDataTextView);
+        descriptionTextView = findViewById(R.id.descriptionTextView); // <<< AÑADIMOS ESTA VISTA
         recipesRecyclerView = findViewById(R.id.recipesRecyclerView);
         recipesTitleTextView = findViewById(R.id.recipesTitleTextView);
         fabSpeak = findViewById(R.id.fabSpeak);
         collapsingToolbar = findViewById(R.id.collapsing_toolbar);
         contentLayout = findViewById(R.id.nested_scroll_view); // Asegúrate de que tu NestedScrollView tenga este ID
+        nutritionalGridLayout = findViewById(R.id.nutritionalGridLayout);
+        nutritionalCard = findViewById(R.id.nutritionalCard);
+        recipesCard = findViewById(R.id.recipesCard);
     }
 
     private void fetchFruitDetails(String slug) {
@@ -140,11 +146,12 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
         if (currentFruit == null) return;
 
         // Poblar las vistas con los datos de la fruta
-        collapsingToolbar.setTitle(currentFruit.getCommonName());
+        // CORRECCIÓN: Eliminamos el título del CollapsingToolbar para que no aparezca al hacer scroll.
+        collapsingToolbar.setTitle(" "); // Se establece un título vacío.
+
+        // CORRECCIÓN: Nos aseguramos de que el nombre común y científico se muestren en su tarjeta.
         commonNameTextView.setText(currentFruit.getCommonName());
         scientificNameTextView.setText(currentFruit.getScientificName());
-        descriptionTextView.setText(currentFruit.getDescription());
-
         // Cargar la imagen desde la URL usando Glide
         Glide.with(this)
                 .load(currentFruit.getImageUrl())
@@ -152,8 +159,10 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
                 .error(R.drawable.ic_launcher_background)
                 .into(fruitImageView);
 
-        // Formatear y mostrar los datos nutricionales
-        nutritionalDataTextView.setText(formatNutritionalData(currentFruit.getNutritionalData()));
+        // CORRECCIÓN: Añadimos las llamadas que faltaban
+        descriptionTextView.setText(currentFruit.getDescription());
+        populateNutritionalData(currentFruit.getNutritionalData());
+
 
         fabSpeak.setVisibility(View.VISIBLE); // Mostramos el botón de hablar
 
@@ -167,7 +176,7 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
     private void setupRecyclerView() {
         recipesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         recipeAdapter = new RecipeAdapter(this, new ArrayList<Recipe>(), recipe -> {
-            // Al hacer clic en una receta, abrimos su pantalla de detalle
+            // MEJORA: Al hacer clic en una receta, abrimos su pantalla de detalle.
             Intent intent = new Intent(this, RecipeDetailActivity.class);
             intent.putExtra(RecipeDetailActivity.EXTRA_RECIPE, recipe);
             startActivity(intent);
@@ -181,14 +190,10 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
             public void onResponse(Call<RecipeListResponse> call, Response<RecipeListResponse> response) {
                 // Añadimos una comprobación para evitar el NullPointerException
                 if (response.isSuccessful() && response.body() != null && response.body().getRecipes() != null && !response.body().getRecipes().isEmpty()) {
-                    recipesTitleTextView.setVisibility(TextView.VISIBLE);
-                    recipesRecyclerView.setVisibility(RecyclerView.VISIBLE);
-                    // Usar un ícono existente para el título de recetas
-                    recipesTitleTextView.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_menu_slideshow, 0, 0, 0); // Este ícono puede no ser el mejor, pero es para el ejemplo
+                    recipesCard.setVisibility(View.VISIBLE);
                     recipeAdapter.updateRecipes(response.body().getRecipes());
                 } else {
-                    recipesTitleTextView.setVisibility(TextView.GONE);
-                    recipesRecyclerView.setVisibility(RecyclerView.GONE);
+                    recipesCard.setVisibility(View.GONE);
                 }
             }
 
@@ -199,19 +204,34 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
         });
     }
 
-    private String formatNutritionalData(JsonObject nutritionalData) {
+    private void populateNutritionalData(JsonObject nutritionalData) {
         if (nutritionalData == null || nutritionalData.size() == 0) {
-            return "No disponible.";
+            nutritionalCard.setVisibility(View.GONE);
+            return;
         }
+
+        // Limpiamos la vista anterior y la hacemos visible
+        nutritionalCard.setVisibility(View.VISIBLE);
+        nutritionalGridLayout.removeAllViews(); // Limpiar vistas anteriores
+
+        // Creamos un solo TextView para toda la lista
+        TextView nutritionalTextView = new TextView(this);
+        TextViewCompat.setTextAppearance(nutritionalTextView, android.R.style.TextAppearance_DeviceDefault_Medium);
+        nutritionalTextView.setLineSpacing(8f, 1f); // Añadimos un poco de espacio entre líneas
+
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, com.google.gson.JsonElement> entry : nutritionalData.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue().getAsString();
             // Capitalizar la primera letra de la clave
             String formattedKey = key.substring(0, 1).toUpperCase() + key.substring(1);
-            builder.append(formattedKey).append(": ").append(value).append("\n");
+
+            // CORRECCIÓN: Añadimos un guion y un salto de línea
+            builder.append("• ").append(formattedKey).append(": ").append(value).append("\n");
         }
-        return builder.toString().trim();
+
+        nutritionalTextView.setText(builder.toString().trim());
+        nutritionalGridLayout.addView(nutritionalTextView);
     }
 
     @Override
@@ -237,7 +257,7 @@ public class FruitDetailActivity extends AppCompatActivity implements TextToSpee
     }
 
     private void speakDescription() {
-        String description = descriptionTextView.getText().toString();
+        String description = currentFruit != null ? currentFruit.getDescription() : "";
         if (!description.isEmpty()) {
             // Registramos que se usó la voz
             logVoiceUsage();

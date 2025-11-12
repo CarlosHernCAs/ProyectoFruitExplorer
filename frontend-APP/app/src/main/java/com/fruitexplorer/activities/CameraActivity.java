@@ -60,6 +60,7 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
     private ApiService apiService;
     private String lastDetectedFruit = "";
     private String lockedFruit = null; // Fruta "bloqueada"
+    private float lockedConfidence = 0.0f; // <<< NUEVO: Guardamos la confianza de la fruta bloqueada
     private boolean isDetectionPaused = false;
 
     private final Handler detectionHandler = new Handler(Looper.getMainLooper());
@@ -109,7 +110,7 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
         btnSeeDetails.setOnClickListener(v -> {
             if (lockedFruit != null) {
                 // Muestra un Toast o un ProgressBar aquí si quieres feedback
-                fetchFruitDetails(lockedFruit);
+                fetchFruitDetails(lockedFruit, lockedConfidence); // <<< CAMBIO: Pasamos también la confianza
             }
         });
     }
@@ -160,6 +161,7 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
     private void resetDetection() {
         isDetectionPaused = false;
         lockedFruit = null;
+        lockedConfidence = 0.0f; // <<< NUEVO: Reiniciamos la confianza
         lastDetectedFruit = "";
         confirmationGroup.setVisibility(View.GONE);
         detectionResultTextView.setText("Apuntando a una fruta...");
@@ -206,6 +208,7 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
                 // Creamos una nueva tarea de confirmación
                 confirmationRunnable = () -> {
                     lockedFruit = fruitName;
+                    lockedConfidence = score; // <<< NUEVO: Guardamos la confianza al bloquear
                     pauseDetection();
                     confirmationGroup.setVisibility(View.VISIBLE);
                 };
@@ -227,7 +230,7 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
         }, ContextCompat.getMainExecutor(this));
     }
 
-    private void fetchFruitDetails(String fruitName) {
+    private void fetchFruitDetails(String fruitName, float confidence) {
         // Primero, intentamos obtener la ubicación
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.getLastLocation()
@@ -237,19 +240,19 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
                             locationString = location.getLatitude() + "," + location.getLongitude();
                         }
                         // Una vez tenemos la ubicación (o no), buscamos los detalles y pasamos la ubicación
-                        fetchFruitDetailsApiCall(fruitName, locationString);
+                        fetchFruitDetailsApiCall(fruitName, locationString, confidence);
                     })
                     .addOnFailureListener(e -> {
                         // Si falla, continuamos sin ubicación
-                        fetchFruitDetailsApiCall(fruitName, null);
+                        fetchFruitDetailsApiCall(fruitName, null, confidence);
                     });
         } else {
             // Si no hay permiso, continuamos sin ubicación
-            fetchFruitDetailsApiCall(fruitName, null);
+            fetchFruitDetailsApiCall(fruitName, null, confidence);
         }
     }
 
-    private void fetchFruitDetailsApiCall(String fruitName, String location) {
+    private void fetchFruitDetailsApiCall(String fruitName, String location, float confidence) {
         apiService.getFruitBySlug(fruitName).enqueue(new Callback<FruitResponse>() {
             @Override
             public void onResponse(Call<FruitResponse> call, Response<FruitResponse> response) {
@@ -257,7 +260,7 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
                     Fruit fruit = response.body().getFruit(); // <-- ¡Aquí está el cambio clave!
 
                     // Ahora que tenemos la fruta, registramos la consulta y luego abrimos los detalles
-                    logQueryAndLaunchDetails(fruit, location);
+                    logQueryAndLaunchDetails(fruit, location, confidence);
 
                 } else {
                     Log.w(TAG, "No se encontró información para la fruta: " + fruitName + " Código: " + response.code());
@@ -272,13 +275,16 @@ public class CameraActivity extends AppCompatActivity implements FruitAnalyzer.F
         });
     }
 
-    private void logQueryAndLaunchDetails(Fruit fruit, String location) {
+    private void logQueryAndLaunchDetails(Fruit fruit, String location, float confidence) {
         if (!sessionManager.isLoggedIn()) {
             launchFruitDetailActivity(fruit, -1); // Lanzar sin ID de consulta
             return;
         }
 
-        LogQueryRequest request = new LogQueryRequest(fruit.getSlug(), location, false);
+        // <<< CAMBIO CRÍTICO: Creamos el LogQueryRequest con todos los datos
+        // Usamos un ID de modelo fijo (ej. 1) por ahora.
+        LogQueryRequest request = new LogQueryRequest(fruit.getSlug(), location, confidence, 1);
+
         apiService.logQuery(request).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
