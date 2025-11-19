@@ -38,10 +38,11 @@ public class Constants {
 
     /**
      * URL base para desarrollo local (dispositivo físico)
+     * IP configurada: 192.168.137.141
      * Cambia esta IP a la IP local de tu computadora en la red WiFi
      * Ejemplo: En Windows/Linux ejecuta: ipconfig o ifconfig
      */
-    public static final String API_BASE_URL_LOCAL = "http://192.168.0.100:4000/api/";
+    public static final String API_BASE_URL_LOCAL = "http://192.168.137.141:4000/api/";
 
     /**
      * URL base para producción
