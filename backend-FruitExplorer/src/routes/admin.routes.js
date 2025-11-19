@@ -7,6 +7,7 @@ import {
   exportFruits,
   exportRecipes,
   exportUsers,
+  exportRegions,
   healthCheck,
   fixOrphans
 } from '../controllers/admin.controller.js';
@@ -29,6 +30,7 @@ router.post('/bulk/assign-role', bulkAssignRole);
 router.get('/export/fruits', exportFruits);
 router.get('/export/recipes', exportRecipes);
 router.get('/export/users', exportUsers);
+router.get('/export/regions', exportRegions);
 
 // Mantenimiento
 router.get('/health-check', healthCheck);
