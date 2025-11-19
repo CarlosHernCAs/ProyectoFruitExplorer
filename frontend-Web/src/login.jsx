@@ -1,12 +1,19 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { AuthContext } from "./context/AuthContext";
 
 export default function Login() {
+  const { login } = useContext(AuthContext);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
+
     try {
       const res = await fetch("http://localhost:4000/api/auth/login", {
         method: "POST",
@@ -15,24 +22,34 @@ export default function Login() {
       });
 
       const data = await res.json();
-      setMessage(data.mensaje || "Inicio de sesión exitoso ✅");
+      console.log("🔍 Respuesta del servidor:", data);
 
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-        // Puedes guardar también el usuario
-        localStorage.setItem("usuario", JSON.stringify(data.usuario));
+      if (!res.ok) {
+        throw new Error(data.message || "Error al iniciar sesión ❌");
       }
 
+      // ✔ Guardar en contexto: token + usuario
+      login(data.token, data.user);
+
+      // ✔ Guardar en localStorage
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("usuario", JSON.stringify(data.user));
+
+      // ✔ Redirigir a inicio
+      window.location.href = "/";
     } catch (err) {
-      console.error(err);
-      setMessage("Error al iniciar sesión ❌");
+      console.error("❌ Error en login:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div>
-      <h2>Iniciar sesión</h2>
-      <form onSubmit={handleLogin}>
+    <section className="section">
+      <h2>Iniciar Sesión 🍍</h2>
+
+      <form onSubmit={handleSubmit}>
         <input
           type="email"
           placeholder="Correo electrónico"
@@ -40,6 +57,7 @@ export default function Login() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
+
         <input
           type="password"
           placeholder="Contraseña"
@@ -47,9 +65,13 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Entrar</button>
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Ingresando..." : "Entrar"}
+        </button>
       </form>
-      <p>{message}</p>
-    </div>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
+    </section>
   );
 }
