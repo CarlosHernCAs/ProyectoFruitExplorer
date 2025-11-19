@@ -12,30 +12,41 @@ export default function Register() {
       const res = await fetch("http://localhost:4000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, display_name: displayName }),
+        // 👇 usamos los nombres correctos que el backend espera
+        body: JSON.stringify({
+          username: displayName,
+          email,
+          password,
+        }),
       });
 
       const data = await res.json();
-      setMessage(data.mensaje || "Registro exitoso ✅");
 
-      // Guarda el token en localStorage para futuras peticiones
-      if (data.token) {
-        localStorage.setItem("token", data.token);
+      if (!res.ok) {
+        setMessage(data.message || "Error al registrar ❌");
+        return;
       }
 
+      setMessage(data.message || "Registro exitoso ✅");
+
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("usuario", JSON.stringify(data.user));
+        window.location.href = "/home";
+      }
     } catch (err) {
       console.error(err);
-      setMessage("Error al registrar ❌");
+      setMessage("Error de conexión con el servidor ❌");
     }
   };
 
   return (
-    <div>
-      <h2>Registro</h2>
+    <div className="section">
+      <h2>Registro 🍓</h2>
       <form onSubmit={handleRegister}>
         <input
           type="text"
-          placeholder="Nombre para mostrar"
+          placeholder="Nombre de usuario"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
           required
@@ -56,7 +67,7 @@ export default function Register() {
         />
         <button type="submit">Registrarse</button>
       </form>
-      <p>{message}</p>
+      {message && <p>{message}</p>}
     </div>
   );
 }
