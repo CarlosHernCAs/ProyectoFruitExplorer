@@ -2,12 +2,12 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link,
   Navigate,
 } from "react-router-dom";
 
 import "./App.css";
 import "./styles/dashboard.css";
+import Layout from "./components/layout/Layout";
 import Login from "./login";
 import Register from "./register";
 import Home from "./Home";
@@ -54,211 +54,188 @@ function ProtectedRoute({ children }) {
 }
 
 function App() {
-  const { token } = useContext(AuthContext);
-
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
       <Router>
-        {/* ----------- HEADER ----------- */}
-        <header>
-        🍓 FruitExplorer
-        <nav>
-          <Link to="/">Inicio</Link>
-          <Link to="/fruits">Frutas</Link>
-          <Link to="/recipes">Recetas</Link>
-          <Link to="/regions">Regiones</Link>
-
-          {!token && <Link to="/login">Login</Link>}
-
-          {token && (
-            <>
-              <Link to="/home">Admin</Link>
-              <Link to="/admin/dashboard">Dashboard</Link>
-              <Link to="/admin/analytics">Analytics</Link>
-              <Link to="/admin/tools">Herramientas</Link>
-              <Link to="/users">Usuarios</Link>
-            </>
-          )}
-        </nav>
-      </header>
-
-      {/* ----------- CONTENIDO ----------- */}
-      <main>
         <Routes>
-          {/* Inicio */}
-          <Route
-            path="/"
-            element={
-              <section className="section">
-                <img
-                  className="home-hero-img"
-                  src="https://cdn-icons-png.flaticon.com/512/415/415733.png"
-                  alt="Fruta"
-                />
-                <h2>Explora el mundo de las frutas 🍍</h2>
-                <p>
-                  Bienvenido a <strong>FruitExplorer</strong>, donde podrás
-                  ver todas las frutas disponibles.
-                </p>
-
-                {/* ❌ ELIMINADO EL BOTÓN “COMENZAR AHORA” */}
-              </section>
-            }
-          />
-
-          {/* AUTENTICACIÓN */}
+          {/* AUTENTICACIÓN - Sin Layout (tienen su propio diseño full-page) */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
 
-          {/* ADMIN PANEL */}
+          {/* Todas las demás rutas con Layout (Sidebar + Navbar + Footer) */}
           <Route
-            path="/home"
+            path="/*"
             element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            }
-          />
+              <Layout>
+                <Routes>
+                  {/* Inicio */}
+                  <Route
+                    path="/"
+                    element={
+                      <section className="section">
+                        <img
+                          className="home-hero-img"
+                          src="https://cdn-icons-png.flaticon.com/512/415/415733.png"
+                          alt="Fruta"
+                        />
+                        <h2>Explora el mundo de las frutas</h2>
+                        <p>
+                          Bienvenido a <strong>FruitExplorer</strong>, donde podrás
+                          ver todas las frutas disponibles.
+                        </p>
+                      </section>
+                    }
+                  />
 
-          {/* FRUTAS - Rutas públicas */}
-          <Route path="/fruits" element={<FruitList />} />
-          <Route path="/fruits/:id" element={<FruitDetail />} />
+                  {/* ADMIN PANEL */}
+                  <Route
+                    path="/home"
+                    element={
+                      <ProtectedRoute>
+                        <Home />
+                      </ProtectedRoute>
+                    }
+                  />
 
-          {/* FRUTAS - Rutas protegidas (admin) */}
-          <Route
-            path="/fruits/add"
-            element={
-              <ProtectedRoute>
-                <AddFruit />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/fruits/edit/:id"
-            element={
-              <ProtectedRoute>
-                <EditFruit />
-              </ProtectedRoute>
-            }
-          />
+                  {/* FRUTAS - Rutas públicas */}
+                  <Route path="/fruits" element={<FruitList />} />
+                  <Route path="/fruits/:id" element={<FruitDetail />} />
 
-          {/* RECETAS - Rutas públicas */}
-          <Route path="/recipes" element={<RecipeList />} />
-          <Route path="/recipes/:id" element={<RecipeDetail />} />
+                  {/* FRUTAS - Rutas protegidas (admin) */}
+                  <Route
+                    path="/fruits/add"
+                    element={
+                      <ProtectedRoute>
+                        <AddFruit />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/fruits/edit/:id"
+                    element={
+                      <ProtectedRoute>
+                        <EditFruit />
+                      </ProtectedRoute>
+                    }
+                  />
 
-          {/* RECETAS - Rutas protegidas (admin) */}
-          <Route
-            path="/recipes/add"
-            element={
-              <ProtectedRoute>
-                <AddRecipe />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/recipes/edit/:id"
-            element={
-              <ProtectedRoute>
-                <EditRecipe />
-              </ProtectedRoute>
-            }
-          />
+                  {/* RECETAS - Rutas públicas */}
+                  <Route path="/recipes" element={<RecipeList />} />
+                  <Route path="/recipes/:id" element={<RecipeDetail />} />
 
-          {/* REGIONES - Rutas públicas */}
-          <Route path="/regions" element={<RegionList />} />
-          <Route path="/regions/:id" element={<RegionDetail />} />
+                  {/* RECETAS - Rutas protegidas (admin) */}
+                  <Route
+                    path="/recipes/add"
+                    element={
+                      <ProtectedRoute>
+                        <AddRecipe />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/recipes/edit/:id"
+                    element={
+                      <ProtectedRoute>
+                        <EditRecipe />
+                      </ProtectedRoute>
+                    }
+                  />
 
-          {/* REGIONES - Rutas protegidas (admin) */}
-          <Route
-            path="/regions/add"
-            element={
-              <ProtectedRoute>
-                <AddRegion />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/regions/edit/:id"
-            element={
-              <ProtectedRoute>
-                <EditRegion />
-              </ProtectedRoute>
-            }
-          />
+                  {/* REGIONES - Rutas públicas */}
+                  <Route path="/regions" element={<RegionList />} />
+                  <Route path="/regions/:id" element={<RegionDetail />} />
 
-          {/* USUARIOS - Solo admin */}
-          <Route
-            path="/users"
-            element={
-              <ProtectedRoute>
-                <UsersPage />
-              </ProtectedRoute>
-            }
-          />
+                  {/* REGIONES - Rutas protegidas (admin) */}
+                  <Route
+                    path="/regions/add"
+                    element={
+                      <ProtectedRoute>
+                        <AddRegion />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/regions/edit/:id"
+                    element={
+                      <ProtectedRoute>
+                        <EditRegion />
+                      </ProtectedRoute>
+                    }
+                  />
 
-          {/* ADMIN DASHBOARD - Solo admin */}
-          <Route
-            path="/admin/dashboard"
-            element={
-              <ProtectedRoute>
-                <DashboardMain />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/analytics"
-            element={
-              <ProtectedRoute>
-                <Analytics />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/tools"
-            element={
-              <ProtectedRoute>
-                <AdminTools />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/stats/fruits"
-            element={
-              <ProtectedRoute>
-                <FruitStats />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/stats/recipes"
-            element={
-              <ProtectedRoute>
-                <RecipeStats />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/stats/users"
-            element={
-              <ProtectedRoute>
-                <UserStats />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/stats/regions"
-            element={
-              <ProtectedRoute>
-                <RegionStats />
-              </ProtectedRoute>
+                  {/* USUARIOS - Solo admin */}
+                  <Route
+                    path="/users"
+                    element={
+                      <ProtectedRoute>
+                        <UsersPage />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  {/* ADMIN DASHBOARD - Solo admin */}
+                  <Route
+                    path="/admin/dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <DashboardMain />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/analytics"
+                    element={
+                      <ProtectedRoute>
+                        <Analytics />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/tools"
+                    element={
+                      <ProtectedRoute>
+                        <AdminTools />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/stats/fruits"
+                    element={
+                      <ProtectedRoute>
+                        <FruitStats />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/stats/recipes"
+                    element={
+                      <ProtectedRoute>
+                        <RecipeStats />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/stats/users"
+                    element={
+                      <ProtectedRoute>
+                        <UserStats />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/stats/regions"
+                    element={
+                      <ProtectedRoute>
+                        <RegionStats />
+                      </ProtectedRoute>
+                    }
+                  />
+                </Routes>
+              </Layout>
             }
           />
         </Routes>
-      </main>
-
-      {/* ----------- FOOTER ----------- */}
-      <footer>© 2025 FruitExplorer | Desarrollado con 💚</footer>
       </Router>
     </>
   );
