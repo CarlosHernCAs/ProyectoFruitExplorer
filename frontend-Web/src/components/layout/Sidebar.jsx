@@ -12,6 +12,7 @@ import {
   LogOut,
   Menu,
   X,
+  Camera
   Scan,
   PieChart,
   TrendingUp
@@ -28,6 +29,7 @@ export default function Sidebar({ isOpen, onToggle }) {
       items: [
         { path: '/', icon: Home, label: 'Inicio' },
         { path: '/fruits', icon: Apple, label: 'Frutas' },
+        { path: '/recognize', icon: Camera, label: 'Reconocer Fruta' },
         { path: '/recipes', icon: BookOpen, label: 'Recetas' },
         { path: '/regions', icon: MapPin, label: 'Regiones' },
         { path: '/recognition', icon: Scan, label: 'Reconocimiento' },

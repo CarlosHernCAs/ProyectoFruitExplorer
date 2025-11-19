@@ -18,6 +18,7 @@ import FruitList from "./pages/FruitList";
 import FruitDetail from "./pages/FruitDetail";
 import AddFruit from "./pages/AddFruit";
 import EditFruit from "./pages/EditFruit";
+import FruitRecognition from "./pages/FruitRecognition";
 
 // Recetas
 import RecipeList from "./pages/RecipeList";
@@ -131,6 +132,7 @@ function App() {
                   {/* FRUTAS - Rutas públicas */}
                   <Route path="/fruits" element={<FruitList />} />
                   <Route path="/fruits/:id" element={<FruitDetail />} />
+                  <Route path="/recognize" element={<FruitRecognition />} />
 
                   {/* FRUTAS - Rutas protegidas (solo admin) */}
                   <Route

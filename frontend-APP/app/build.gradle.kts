@@ -16,15 +16,29 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Configuración de API para diferentes entornos
+        // Para localhost en emulador Android: 10.0.2.2:4000
+        // Para localhost en dispositivo físico: usa tu IP local (ej: 192.168.x.x:4000)
+        buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:4000/api/\"")
+        buildConfigField("String", "API_BASE_URL_DEVICE", "\"http://192.168.0.100:4000/api/\"")
     }
 
     buildTypes {
+        debug {
+            // En desarrollo, usa la URL del emulador por defecto
+            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:4000/api/\"")
+            buildConfigField("String", "API_BASE_URL_DEVICE", "\"http://192.168.0.100:4000/api/\"")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // En producción, usa la URL real del servidor
+            buildConfigField("String", "API_BASE_URL", "\"https://fruitexplorer-api.com/api/\"")
+            buildConfigField("String", "API_BASE_URL_DEVICE", "\"https://fruitexplorer-api.com/api/\"")
         }
     }
     compileOptions {

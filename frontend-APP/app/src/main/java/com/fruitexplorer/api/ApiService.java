@@ -58,4 +58,9 @@ public interface ApiService {
     // ▼▼▼ MÉTODO AÑADIDO ▼▼▼
     @GET("recipes/{id}")
     Call<RecipeDetailResponse> getRecipeById(@Path("id") int recipeId);
+
+    // ▼▼▼ HEALTH CHECK ENDPOINT ▼▼▼
+    // Verifica que el servidor esté funcionando
+    @GET("health")
+    Call<Void> healthCheck();
 }
