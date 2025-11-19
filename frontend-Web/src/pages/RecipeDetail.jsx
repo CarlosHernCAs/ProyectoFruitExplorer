@@ -18,7 +18,7 @@ export default function RecipeDetail() {
     try {
       setLoading(true);
       const data = await getRecipeById(id);
-      setRecipe(data.receta);
+      setRecipe(data.recipe);
     } catch (err) {
       setError("Error al cargar la receta: " + err.message);
       console.error(err);
@@ -68,7 +68,7 @@ export default function RecipeDetail() {
       </button>
 
       <div className="fruit-detail-card">
-        <h1 className="fruit-title">{recipe.name}</h1>
+        <h1 className="fruit-title">{recipe.title}</h1>
 
         {recipe.description && (
           <div className="fruit-description">
@@ -77,17 +77,21 @@ export default function RecipeDetail() {
           </div>
         )}
 
-        {recipe.ingredients && (
+        {recipe.source && (
           <div className="fruit-description">
-            <h3>Ingredientes</h3>
-            <p style={{ whiteSpace: "pre-line" }}>{recipe.ingredients}</p>
+            <h3>Fuente</h3>
+            <p>{recipe.source}</p>
           </div>
         )}
 
-        {recipe.instructions && (
+        {recipe.steps && recipe.steps.length > 0 && (
           <div className="fruit-description">
-            <h3>Instrucciones</h3>
-            <p style={{ whiteSpace: "pre-line" }}>{recipe.instructions}</p>
+            <h3>Pasos</h3>
+            <ol>
+              {recipe.steps.map((step) => (
+                <li key={step.step_number}>{step.description}</li>
+              ))}
+            </ol>
           </div>
         )}
       </div>

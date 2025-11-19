@@ -8,7 +8,7 @@ export default function FruitList() {
 
   useEffect(() => {
     getFruits()
-      .then((data) => setFruits(data.frutas || []))
+      .then((data) => setFruits(data.fruits || []))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);

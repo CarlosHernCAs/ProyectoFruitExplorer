@@ -8,10 +8,10 @@ export default function AddRecipe() {
   const [error, setError] = useState("");
 
   const [form, setForm] = useState({
-    name: "",
+    title: "",
     description: "",
-    ingredients: "",
-    instructions: "",
+    source: "",
+    image_url: "",
   });
 
   const handleChange = (e) => {
@@ -19,7 +19,7 @@ export default function AddRecipe() {
   };
 
   const validate = () => {
-    if (!form.name.trim()) return "El nombre es obligatorio.";
+    if (!form.title.trim()) return "El título es obligatorio.";
     if (!form.description.trim()) return "La descripción es obligatoria.";
     return "";
   };
@@ -63,12 +63,12 @@ export default function AddRecipe() {
         )}
 
         <div className="input-group">
-          <label>Nombre *</label>
+          <label>Título *</label>
           <input
             type="text"
-            name="name"
+            name="title"
             placeholder="Ej: Tarta de manzana"
-            value={form.name}
+            value={form.title}
             onChange={handleChange}
             required
           />
@@ -87,24 +87,24 @@ export default function AddRecipe() {
         </div>
 
         <div className="input-group">
-          <label>Ingredientes</label>
-          <textarea
-            name="ingredients"
-            placeholder="Lista de ingredientes (uno por línea)"
-            value={form.ingredients}
+          <label>Fuente</label>
+          <input
+            type="text"
+            name="source"
+            placeholder="Ej: Receta familiar, sitio web, etc."
+            value={form.source}
             onChange={handleChange}
-            rows={6}
           />
         </div>
 
         <div className="input-group">
-          <label>Instrucciones</label>
-          <textarea
-            name="instructions"
-            placeholder="Pasos para preparar la receta"
-            value={form.instructions}
+          <label>URL de imagen</label>
+          <input
+            type="text"
+            name="image_url"
+            placeholder="https://ejemplo.com/imagen.jpg"
+            value={form.image_url}
             onChange={handleChange}
-            rows={8}
           />
         </div>
 

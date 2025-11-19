@@ -41,6 +41,8 @@ import FruitStats from "./pages/admin/FruitStats";
 import RecipeStats from "./pages/admin/RecipeStats";
 import UserStats from "./pages/admin/UserStats";
 import RegionStats from "./pages/admin/RegionStats";
+// Reconocimiento de Frutas
+import FruitRecognition from "./pages/FruitRecognition";
 
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
@@ -68,6 +70,7 @@ function App() {
           <Link to="/fruits">Frutas</Link>
           <Link to="/recipes">Recetas</Link>
           <Link to="/regions">Regiones</Link>
+          <Link to="/recognition">🔍 Reconocer</Link>
 
           {!token && <Link to="/login">Login</Link>}
 
