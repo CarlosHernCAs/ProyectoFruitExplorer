@@ -93,8 +93,8 @@ console.log(data);
     "descripcion": "Una manzana roja brillante que parece estar madura y lista para consumir"
   },
   "metadata": {
-    "modelo": "gpt-4o-mini",
-    "tokens_usados": 245,
+    "modelo": "gemini-2.5-flash",
+    "proveedor": "Google Gemini",
     "timestamp": "2025-01-19T10:30:00.000Z"
   }
 }
@@ -110,8 +110,8 @@ console.log(data);
     "descripcion": "La imagen muestra un automóvil rojo en una calle"
   },
   "metadata": {
-    "modelo": "gpt-4o-mini",
-    "tokens_usados": 150,
+    "modelo": "gemini-2.5-flash",
+    "proveedor": "Google Gemini",
     "timestamp": "2025-01-19T10:30:00.000Z"
   }
 }
@@ -138,16 +138,16 @@ console.log(data);
   "mensaje": "El tamaño máximo permitido es 5MB."
 }
 
-// Error de OpenAI API (500)
+// Error de Gemini API (500)
 {
-  "error": "Error de autenticación con OpenAI. Verifica la API key.",
-  "mensaje": "La clave API de OpenAI no es válida o ha expirado."
+  "error": "Error de autenticación con Google Gemini",
+  "mensaje": "La clave API de Gemini no es válida o ha expirado."
 }
 
 // Límite de solicitudes excedido (429)
 {
   "error": "Límite de solicitudes excedido",
-  "mensaje": "Has alcanzado el límite de solicitudes de la API de OpenAI."
+  "mensaje": "Has alcanzado el límite de solicitudes de la API de Gemini."
 }
 ```
 
@@ -324,16 +324,16 @@ function FruitRecognition() {
 
 ## Costos y Límites
 
-### Google Gemini 1.5 Flash (GRATIS!)
+### Google Gemini 2.5 Flash (GRATIS!)
 
-- **Modelo:** `gemini-1.5-flash`
+- **Modelo:** `gemini-2.5-flash` (multimodal: soporta imágenes y texto)
 - **Costo:** **¡GRATIS!** hasta 15 solicitudes por minuto
 - **Límite gratuito:**
   - 15 requests/minuto (RPM)
-  - 1 millón tokens/minuto (TPM)
+  - 1 millón de tokens/minuto (TPM)
   - 1,500 requests/día (RPD)
 - **Costo estimado por petición:** **$0.00 USD** (en tier gratuito)
-- **Ideal para:** Desarrollo, MVPs, aplicaciones pequeñas
+- **Ideal para:** Desarrollo, MVPs, aplicaciones pequeñas y medianas
 
 ### Límites de Multer
 
@@ -350,7 +350,7 @@ function FruitRecognition() {
 
 ### Error 429: "Límite de solicitudes excedido"
 
-**Solución:** Has excedido el límite de 15 solicitudes por minuto. Espera un minuto e intenta de nuevo. El límite se resetea automáticamente.
+**Solución:** Has excedido el límite de 15 solicitudes por minuto o 1,500 por día. Espera un minuto e intenta de nuevo. El límite se resetea automáticamente.
 
 ### Error 400: "Tipo de archivo no válido"
 
@@ -379,9 +379,9 @@ function FruitRecognition() {
 
 1. **Rate Limiting:** Implementa límites de solicitudes por IP/usuario
 2. **Validación de Imágenes:** El middleware ya valida tipos y tamaños
-3. **API Key:** Nunca expongas la API key de OpenAI en el frontend
+3. **API Key:** Nunca expongas la API key de Gemini en el frontend
 4. **CORS:** Configura CORS apropiadamente para producción
-5. **Costos:** Monitorea el uso de la API de OpenAI para evitar costos inesperados
+5. **Costos:** Monitorea el uso de la API de Gemini aunque sea gratuita
 
 ---
 
@@ -415,5 +415,6 @@ curl -X POST http://localhost:4000/api/recognition/nutrition \
 ## Soporte
 
 Para preguntas o problemas, consulta:
-- Documentación de OpenAI: https://platform.openai.com/docs
+- Documentación de Google Gemini: https://ai.google.dev/docs
+- Guía de Rate Limits: https://ai.google.dev/gemini-api/docs/rate-limits
 - Documentación de Multer: https://github.com/expressjs/multer

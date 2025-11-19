@@ -1,15 +1,9 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Inicializar cliente de Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-/**
- * Reconocer fruta desde una imagen usando Google Gemini Vision
- * Recibe una imagen y devuelve información sobre la fruta identificada
- */
 export const reconocerFruta = async (req, res) => {
   try {
-    // Validar que se haya subido una imagen
     if (!req.file) {
       return res.status(400).json({
         error: "No se ha subido ninguna imagen.",
@@ -17,14 +11,11 @@ export const reconocerFruta = async (req, res) => {
       });
     }
 
-    // Obtener el buffer de la imagen y convertirlo a base64
     const imagenBuffer = req.file.buffer;
     const base64Image = imagenBuffer.toString('base64');
 
-    // Preparar el modelo Gemini con capacidades de visión
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-    // Prompt mejorado para análisis de frutas
     const prompt = `Analiza esta imagen y determina si es una fruta. Si lo es, identifícala y proporciona la siguiente información en formato JSON válido:
 
 {
@@ -45,7 +36,6 @@ Si NO es una fruta, responde:
 
 IMPORTANTE: Responde ÚNICAMENTE con el JSON, sin texto adicional, sin markdown, sin backticks.`;
 
-    // Preparar el contenido con la imagen
     const imagePart = {
       inlineData: {
         data: base64Image,
@@ -53,30 +43,21 @@ IMPORTANTE: Responde ÚNICAMENTE con el JSON, sin texto adicional, sin markdown,
       }
     };
 
-    // Generar contenido con Gemini
     const result = await model.generateContent([prompt, imagePart]);
     const response = await result.response;
     const textoRespuesta = response.text();
 
-    // Intentar parsear el JSON
     let resultado;
     try {
-      // Limpiar la respuesta de posibles backticks o markdown
       let jsonText = textoRespuesta.trim();
-
-      // Remover bloques de código markdown si existen
       jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-
-      // Intentar parsear
       resultado = JSON.parse(jsonText);
     } catch (parseError) {
-      // Si no es JSON válido, intentar extraerlo
       const jsonMatch = textoRespuesta.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         try {
           resultado = JSON.parse(jsonMatch[0]);
         } catch (e) {
-          // Si todo falla, crear respuesta básica
           resultado = {
             es_fruta: false,
             descripcion: textoRespuesta,
@@ -96,7 +77,7 @@ IMPORTANTE: Responde ÚNICAMENTE con el JSON, sin texto adicional, sin markdown,
       exito: true,
       resultado: resultado,
       metadata: {
-        modelo: "gemini-1.5-flash",
+        modelo: "gemini-2.5-flash",
         proveedor: "Google Gemini",
         timestamp: new Date().toISOString()
       }
@@ -105,7 +86,6 @@ IMPORTANTE: Responde ÚNICAMENTE con el JSON, sin texto adicional, sin markdown,
   } catch (error) {
     console.error('Error en reconocerFruta:', error);
 
-    // Manejo específico de errores de Gemini
     if (error.message?.includes('API key')) {
       return res.status(500).json({
         error: "Error de autenticación con Google Gemini",
@@ -127,9 +107,6 @@ IMPORTANTE: Responde ÚNICAMENTE con el JSON, sin texto adicional, sin markdown,
   }
 };
 
-/**
- * Obtener información nutricional de una fruta usando Gemini
- */
 export const obtenerInfoNutricional = async (req, res) => {
   try {
     const { nombreFruta } = req.body;
@@ -141,7 +118,7 @@ export const obtenerInfoNutricional = async (req, res) => {
       });
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const prompt = `Proporciona información nutricional detallada sobre "${nombreFruta}" en formato JSON:
 {
@@ -165,7 +142,6 @@ Responde ÚNICAMENTE con el JSON, sin texto adicional, sin markdown, sin backtic
 
     let resultado;
     try {
-      // Limpiar la respuesta
       let jsonText = textoRespuesta.trim();
       jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
       resultado = JSON.parse(jsonText);

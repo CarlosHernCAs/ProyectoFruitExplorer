@@ -101,7 +101,7 @@ curl -X POST http://localhost:4000/api/recognition/nutrition \
 | Tokens por minuto (TPM) | 1,000,000 |
 | Solicitudes por día (RPD) | 1,500 |
 
-**Nota:** Estos límites son más que suficientes para desarrollo y aplicaciones pequeñas.
+**Nota:** Estos límites son más que suficientes para desarrollo y aplicaciones pequeñas/medianas.
 
 ---
 
