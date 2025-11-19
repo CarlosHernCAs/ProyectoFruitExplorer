@@ -35,7 +35,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Inicializar componentes clave primero
         apiService = ApiClient.getApiService(this);
         sessionManager = new SessionManager(this);
 
@@ -44,11 +43,9 @@ public class LoginActivity extends AppCompatActivity {
         buttonLogin = findViewById(R.id.btnLogin);
         buttonGoToRegister = findViewById(R.id.btnGoToRegister);
 
-        // --- INICIO: Código de la animación ---
         ImageView logo = findViewById(R.id.logoImageView);
         Animation logoAnimation = AnimationUtils.loadAnimation(this, R.anim.logo_animation);
         logo.startAnimation(logoAnimation);
-        // --- FIN: Código de la animación ---
 
         buttonLogin.setOnClickListener(v -> loginUser());
         buttonGoToRegister.setOnClickListener(v -> {
@@ -73,20 +70,16 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Guardar la sesión del usuario
                     sessionManager.createLoginSession(response.body().getToken(), response.body().getUsuario());
 
-                    // Redirigir a HomeActivity
                     goToNextActivity();
                 } else {
-                    // Manejar error de la API (ej. credenciales incorrectas)
                     Toast.makeText(LoginActivity.this, "Error en el login. Código: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<AuthResponse> call, Throwable t) {
-                // Manejar error de red
                 Log.e("LoginActivity", "Error de red: ", t);
                 Toast.makeText(LoginActivity.this, "Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -98,9 +91,9 @@ public class LoginActivity extends AppCompatActivity {
         if (sessionManager.hasSeenWelcomeScreen()) {
             intent = new Intent(LoginActivity.this, ExploreActivity.class);
         } else {
-           intent = new Intent(LoginActivity.this, WelcomeActivity.class);
+            intent = new Intent(LoginActivity.this, WelcomeActivity.class);
         }
         startActivity(intent);
-        finish(); // Cierra LoginActivity para que el usuario no pueda volver a ella con el botón "atrás"
+        finish();
     }
 }

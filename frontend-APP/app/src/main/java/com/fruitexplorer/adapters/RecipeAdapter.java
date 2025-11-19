@@ -33,7 +33,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     public void updateRecipes(List<Recipe> recipes) {
         if (recipes != null) {
             this.recipes = recipes;
-            notifyDataSetChanged(); // Notifica al RecyclerView que los datos han cambiado y debe redibujarse.
+            notifyDataSetChanged();
         } else {
             this.recipes.clear();
             notifyDataSetChanged();
@@ -72,7 +72,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
         public void bind(final Recipe recipe, final OnRecipeClickListener listener) {
             recipeNameTextView.setText(recipe.getTitle());
-            recipeTimeTextView.setVisibility(View.GONE); // Ocultamos este campo ya que no lo tenemos
+            recipeTimeTextView.setVisibility(View.GONE);
             Glide.with(context).load(recipe.getImageUrl()).into(recipeImageView);
             itemView.setOnClickListener(v -> listener.onRecipeClick(recipe));
         }

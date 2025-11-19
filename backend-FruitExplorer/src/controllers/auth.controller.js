@@ -18,9 +18,10 @@ export const register = async (req, res) => {
 
 // Iniciar sesión
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email: originalEmail, password } = req.body;
 
   try {
+    const email = originalEmail.toLowerCase();
     const result = await loginUser(email, password);
     res.status(200).json({
       mensaje: 'Inicio de sesión exitoso',

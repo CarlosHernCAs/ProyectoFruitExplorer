@@ -6,6 +6,7 @@ import com.fruitexplorer.models.FruitListResponse;
 import com.fruitexplorer.models.LoginRequest;
 import com.fruitexplorer.models.RegionResponse;
 import com.fruitexplorer.models.LogQueryRequest;
+import com.fruitexplorer.models.RecipeDetailResponse;
 import com.fruitexplorer.models.RegisterRequest;
 import com.fruitexplorer.models.RecipeListResponse;
 
@@ -53,4 +54,8 @@ public interface ApiService {
     // ▼▼▼ MÉTODO FALTANTE ▼▼▼
     @GET("recipes")
     Call<RecipeListResponse> getRecipes(@Query("q") String query);
+
+    // ▼▼▼ MÉTODO AÑADIDO ▼▼▼
+    @GET("recipes/{id}")
+    Call<RecipeDetailResponse> getRecipeById(@Path("id") int recipeId);
 }

@@ -3,9 +3,11 @@ package com.fruitexplorer.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,8 +15,8 @@ import com.fruitexplorer.R;
 import com.fruitexplorer.adapters.FruitAdapter;
 import com.fruitexplorer.api.ApiClient;
 import com.fruitexplorer.api.ApiService;
-import com.fruitexplorer.models.Fruit; // Ya estaba importado
-import com.fruitexplorer.models.FruitListResponse; // Importar el nuevo modelo
+import com.fruitexplorer.models.Fruit;
+import com.fruitexplorer.models.FruitListResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +35,6 @@ public class RegionFruitsActivity extends AppCompatActivity implements FruitAdap
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Asumimos que crearás un layout activity_region_fruits.xml
         setContentView(R.layout.activity_region_fruits);
 
         int regionId = getIntent().getIntExtra("REGION_ID", -1);
@@ -54,34 +55,40 @@ public class RegionFruitsActivity extends AppCompatActivity implements FruitAdap
     }
 
     private void setupRecyclerView() {
-        fruitsRecyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // 2 columnas
+        fruitsRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         fruitAdapter = new FruitAdapter(this, fruitList, this);
         fruitsRecyclerView.setAdapter(fruitAdapter);
     }
 
     private void fetchFruits(int regionId) {
-        apiService.getFruitsByRegion(regionId).enqueue(new Callback<FruitListResponse>() { // Usar FruitListResponse
+        apiService.getFruitsByRegion(regionId).enqueue(new Callback<FruitListResponse>() {
             @Override
-            public void onResponse(Call<FruitListResponse> call, Response<FruitListResponse> response) { // Usar FruitListResponse
+            public void onResponse(Call<FruitListResponse> call, Response<FruitListResponse> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getFruits() != null) {
                     fruitAdapter.updateFruits(response.body().getFruits());
                 } else {
-                    // Si la respuesta no es exitosa (ej. 404) o no hay frutas, mostramos un mensaje.
                     Toast.makeText(RegionFruitsActivity.this, "No se encontraron frutas para esta región.", Toast.LENGTH_LONG).show();
                 }
             }
             @Override
-            public void onFailure(Call<FruitListResponse> call, Throwable t) { // Usar FruitListResponse
+            public void onFailure(Call<FruitListResponse> call, Throwable t) {
                 Log.e(TAG, "Error de red al cargar frutas: ", t);
             }
         });
     }
 
     @Override
-    public void onFruitClick(Fruit fruit) {
+    public void onFruitClick(Fruit fruit, ImageView fruitImageView) {
         Intent intent = new Intent(this, FruitDetailActivity.class);
         intent.putExtra(FruitDetailActivity.EXTRA_FRUIT_SLUG, fruit.getSlug());
-        startActivity(intent);
+
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                this,
+                fruitImageView,
+                "fruit_image"
+        );
+
+        startActivity(intent, options.toBundle());
     }
 
     @Override

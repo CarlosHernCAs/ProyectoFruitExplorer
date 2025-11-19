@@ -9,15 +9,15 @@ export const logQuery = async (req, res) => {
   // El ID del usuario lo inyecta el middleware requireAuth
   const userId = req.user.id;
   // CORRECCIÓN: Leemos los nuevos campos del cuerpo de la solicitud
-  const { fruitName, location, confidence, modelId } = req.body;
+  const { fruit_name, location, confidence, modelId, device_info } = req.body;
 
-  if (!fruitName) {
+  if (!fruit_name) {
     return res.status(400).json({ mensaje: 'El nombre de la fruta (fruitName) es obligatorio.' });
   }
 
   try {
     // 1. Buscar el ID de la fruta usando su 'slug' (que es lo que nos llega como fruitName)
-    const [fruitRows] = await pool.query('SELECT id FROM fruits WHERE slug = ?', [fruitName]);
+    const [fruitRows] = await pool.query('SELECT id FROM fruits WHERE slug = ?', [fruit_name]);
 
     if (fruitRows.length === 0) {
       // Si la fruta no existe en la BD, no podemos registrar la consulta.
@@ -31,9 +31,9 @@ export const logQuery = async (req, res) => {
     // Asumimos que la tabla 'queries' tiene estas columnas.
     // CORRECCIÓN: Añadimos las nuevas columnas a la consulta INSERT
     const [result] = await pool.query(
-      `INSERT INTO queries (user_id, fruit_id, confidence, model_id, detected_name, location, voice_enabled, detected_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, NOW())`,
-      [userId, fruitId, confidence || null, modelId || null, fruitName, location || null, false]
+      `INSERT INTO queries (user_id, fruit_id, confidence, model_id, detected_name, location, device_info, voice_enabled, detected_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
+      [userId, fruitId, confidence || null, modelId || null, fruit_name, location || null, device_info || null, false]
     );
 
     res.status(201).json({

@@ -15,49 +15,89 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Grupo de vistas para la fase de confirmación -->
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/confirmationGroup"
+    <!-- Indicador de carga principal (para llamadas a la API) -->
+    <ProgressBar
+        android:id="@+id/loadingIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="btnSeeDetails, btnRetry"
-        tools:visibility="visible" />
-
-    <TextView
-        android:id="@+id/detectionResultTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:background="#80000000"
-        android:padding="16dp"
-        android:text="Apuntando a una fruta..."
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/btnSeeDetails"
+        tools:visibility="visible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:elevation="10dp"/>
 
-    <Button
-        android:id="@+id/btnSeeDetails"
+    <!-- Contenedor para los resultados y acciones -->
+    <LinearLayout
+        android:id="@+id/confirmationGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Ver Detalles"
+        android:orientation="vertical"
+        android:background="@drawable/background_bottom_sheet"
+        android:elevation="8dp"
+        android:padding="16dp"
+        android:visibility="gone"
+        tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btnRetry"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageButton
-        android:id="@+id/btnRetry"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:src="@android:drawable/ic_menu_revert"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@id/btnSeeDetails"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btnSeeDetails"
-        android:contentDescription="Reintentar" />
+        app:layout_constraintStart_toStartOf="parent">
+        
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/background_text_rounded"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            >
+            <TextView
+                android:id="@+id/detectionResultTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Apuntando a una fruta..."
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorOnPrimary"
+                android:textStyle="bold" />
+
+            <ProgressBar
+                android:id="@+id/detectionProgress"
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/detectionResultTextView"
+                android:layout_marginEnd="8dp"
+                android:indeterminateTint="?attr/colorOnPrimary"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRetry"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reintentar"
+                app:icon="@drawable/ic_retry" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSeeDetails"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:text="Ver Detalles" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

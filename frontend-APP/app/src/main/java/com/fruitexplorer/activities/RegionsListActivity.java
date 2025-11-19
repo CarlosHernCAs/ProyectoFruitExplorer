@@ -88,4 +88,4 @@ public class RegionsListActivity extends AppCompatActivity implements RegionAdap
         onBackPressed();
         return true;
     }
-}
+} 
