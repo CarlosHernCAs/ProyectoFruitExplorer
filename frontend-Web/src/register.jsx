@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "./context/AuthContext";
 
 export default function Register() {
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
@@ -30,9 +35,10 @@ export default function Register() {
       setMessage(data.message || "Registro exitoso ✅");
 
       if (data.token) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("usuario", JSON.stringify(data.user));
-        window.location.href = "/home";
+        // ✔ Usar el contexto para guardar la sesión
+        login(data.token, data.user);
+        // ✔ Redirigir sin recargar la página
+        navigate("/home", { replace: true });
       }
     } catch (err) {
       console.error(err);

@@ -5,6 +5,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true); // ✨ Nuevo estado de carga
 
   // 🟢 Cargar usuario y token desde localStorage al iniciar
   useEffect(() => {
@@ -22,6 +23,9 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("usuario");
       }
     }
+
+    // ✅ Marcar como cargado después de verificar localStorage
+    setLoading(false);
   }, []);
 
   // 🟢 Iniciar sesión (guardar token + usuario)
@@ -44,8 +48,23 @@ export const AuthProvider = ({ children }) => {
     window.location.href = "/login";
   };
 
+  // 🔄 Mostrar spinner mientras se verifica la sesión
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        fontSize: '1.5rem'
+      }}>
+        Cargando... 🍓
+      </div>
+    );
+  }
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
