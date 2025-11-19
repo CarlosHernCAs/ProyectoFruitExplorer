@@ -1,0 +1,116 @@
+/* Card Base */
+.card {
+  background: white;
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+/* Variants */
+.card--default {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.card--bordered {
+  border: 2px solid #e5e7eb;
+}
+
+.card--elevated {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+              0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.card--gradient {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Padding */
+.card--padding-none {
+  padding: 0;
+}
+
+.card--padding-sm {
+  padding: 1rem;
+}
+
+.card--padding-md {
+  padding: 1.5rem;
+}
+
+.card--padding-lg {
+  padding: 2rem;
+}
+
+/* Hover */
+.card--hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.12),
+              0 8px 16px -4px rgba(0, 0, 0, 0.08);
+}
+
+/* Clickable */
+.card--clickable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.card--clickable:active {
+  transform: scale(0.98);
+}
+
+/* Card Sub-components */
+.card__header {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+}
+
+.card__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1.4;
+}
+
+.card__description {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.card__body {
+  color: #374151;
+  line-height: 1.6;
+}
+
+.card__footer {
+  padding-top: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Remove default padding when using subcomponents */
+.card:has(.card__header, .card__body, .card__footer) {
+  padding: 0;
+}
+
+.card:has(.card__header, .card__body, .card__footer) .card__header,
+.card:has(.card__header, .card__body, .card__footer) .card__body,
+.card:has(.card__header, .card__body, .card__footer) .card__footer {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.card:has(.card__header, .card__body, .card__footer) .card__header {
+  padding-top: 1.5rem;
+}
+
+.card:has(.card__header, .card__body, .card__footer) .card__footer {
+  padding-bottom: 1.5rem;
+}
