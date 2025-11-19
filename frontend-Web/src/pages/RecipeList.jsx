@@ -18,7 +18,7 @@ export default function RecipeList() {
     try {
       setLoading(true);
       const data = await getRecipes();
-      setRecipes(data.recetas || []);
+      setRecipes(data.recipes || []);
     } catch (err) {
       setError("Error al cargar recetas: " + err.message);
       console.error(err);
@@ -61,7 +61,7 @@ export default function RecipeList() {
               onClick={() => navigate(`/recipes/${recipe.id}`)}
               style={{ cursor: "pointer" }}
             >
-              <h2>{recipe.name}</h2>
+              <h2>{recipe.title}</h2>
               {recipe.description && (
                 <p style={{ fontSize: "0.9rem", color: "var(--text-light)" }}>
                   {recipe.description.substring(0, 100)}

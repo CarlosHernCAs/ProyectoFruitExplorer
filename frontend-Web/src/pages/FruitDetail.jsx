@@ -20,11 +20,11 @@ export default function FruitDetail() {
       setLoading(true);
       const [fruitData, recipesData] = await Promise.all([
         getFruitById(id),
-        getFruitRecipes(id).catch(() => ({ recetas: [] }))
+        getFruitRecipes(id).catch(() => ({ recipes: [] }))
       ]);
 
-      setFruit(fruitData.fruta);
-      setRecipes(recipesData.recetas || []);
+      setFruit(fruitData.fruit);
+      setRecipes(recipesData.recipes || []);
     } catch (err) {
       setError("Error al cargar la fruta: " + err.message);
       console.error(err);

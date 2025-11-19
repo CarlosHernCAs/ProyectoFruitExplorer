@@ -16,7 +16,7 @@ export default function EditFruit() {
     const load = async () => {
       try {
         const data = await getFruitById(id);
-        setForm(data.fruta);
+        setForm(data.fruit);
       } catch (err) {
         console.error(err);
         setError("No se pudo cargar la información.");

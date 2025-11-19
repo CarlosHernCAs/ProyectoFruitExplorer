@@ -18,7 +18,7 @@ export default function RegionList() {
     try {
       setLoading(true);
       const data = await getRegions();
-      setRegions(data.regiones || []);
+      setRegions(data.regions || []);
     } catch (err) {
       setError("Error al cargar regiones: " + err.message);
       console.error(err);
