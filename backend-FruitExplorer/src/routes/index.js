@@ -8,7 +8,13 @@ import recipeStepRoutes from './recipeStep.routes.js';
 import regionRoutes from './region.routes.js';
 import fruitRecipeRoutes from './fruitRecipe.routes.js';
 import queryRoutes from './query.routes.js';
+
+import dashboardRoutes from './dashboard.routes.js';
+import analyticsRoutes from './analytics.routes.js';
+import adminRoutes from './admin.routes.js';
+
 import recognitionRoutes from './recognition.routes.js';
+
 
 export const router = Router();
 
@@ -21,4 +27,9 @@ router.use('/steps', recipeStepRoutes);
 router.use('/regions', regionRoutes);
 router.use('/fruit-recipes', fruitRecipeRoutes);
 router.use('/queries', queryRoutes);
+router.use('/dashboard', dashboardRoutes);
+router.use('/analytics', analyticsRoutes);
+router.use('/admin', adminRoutes);
+
 router.use('/recognition', recognitionRoutes);
+
