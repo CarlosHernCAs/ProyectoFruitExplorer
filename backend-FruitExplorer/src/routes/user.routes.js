@@ -5,7 +5,8 @@ import {
   updateProfile,
   deleteUser,
   assignRole,
-  removeRole
+  removeRole,
+  updateUserRole
 } from '../controllers/user.controller.js';
 import { requireAuth } from '../middlewares/auth.middleware.js';
 import { requireRole } from '../middlewares/role.middleware.js';
@@ -19,5 +20,6 @@ router.put('/update', requireAuth, updateProfile);
 router.delete('/:id', requireAuth, requireRole('admin'), deleteUser);
 router.post('/assign-role', requireAuth, requireRole('admin'), assignRole);
 router.post('/remove-role', requireAuth, requireRole('admin'), removeRole);
+router.put('/update-role', requireAuth, requireRole('admin'), updateUserRole);
 
 export default router;

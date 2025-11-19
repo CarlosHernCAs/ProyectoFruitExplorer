@@ -19,7 +19,7 @@ export default function EditRecipe() {
     try {
       setLoading(true);
       const data = await getRecipeById(id);
-      setForm(data.receta);
+      setForm(data.recipe);
     } catch (err) {
       setError("Error al cargar la receta: " + err.message);
       console.error(err);
@@ -33,8 +33,8 @@ export default function EditRecipe() {
   };
 
   const validate = () => {
-    if (!form.name.trim()) return "El nombre es obligatorio.";
-    if (!form.description.trim()) return "La descripción es obligatoria.";
+    if (!form.title || !form.title.trim()) return "El título es obligatorio.";
+    if (!form.description || !form.description.trim()) return "La descripción es obligatoria.";
     return "";
   };
 
@@ -96,11 +96,11 @@ export default function EditRecipe() {
         )}
 
         <div className="input-group">
-          <label>Nombre *</label>
+          <label>Título *</label>
           <input
             type="text"
-            name="name"
-            value={form.name}
+            name="title"
+            value={form.title || ""}
             onChange={handleChange}
             required
           />
@@ -110,7 +110,7 @@ export default function EditRecipe() {
           <label>Descripción *</label>
           <textarea
             name="description"
-            value={form.description}
+            value={form.description || ""}
             onChange={handleChange}
             required
             rows={3}
@@ -118,22 +118,22 @@ export default function EditRecipe() {
         </div>
 
         <div className="input-group">
-          <label>Ingredientes</label>
-          <textarea
-            name="ingredients"
-            value={form.ingredients || ""}
+          <label>Fuente</label>
+          <input
+            type="text"
+            name="source"
+            value={form.source || ""}
             onChange={handleChange}
-            rows={6}
           />
         </div>
 
         <div className="input-group">
-          <label>Instrucciones</label>
-          <textarea
-            name="instructions"
-            value={form.instructions || ""}
+          <label>URL de imagen</label>
+          <input
+            type="text"
+            name="image_url"
+            value={form.image_url || ""}
             onChange={handleChange}
-            rows={8}
           />
         </div>
 

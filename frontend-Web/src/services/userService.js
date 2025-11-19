@@ -41,3 +41,10 @@ export const removeRole = (userId, roleId) => {
     body: JSON.stringify({ user_id: userId, role_id: roleId })
   });
 };
+
+export const updateUserRole = (userId, roleName) => {
+  return apiFetch("/users/update-role", {
+    method: "PUT",
+    body: JSON.stringify({ user_id: userId, role_name: roleName })
+  });
+};

@@ -14,7 +14,7 @@ export default function Home() {
 
   const loadFruits = async () => {
     const data = await getFruits();
-    setFruits(data.frutas);
+    setFruits(data.fruits || []);
   };
 
   const handleDelete = async (id) => {

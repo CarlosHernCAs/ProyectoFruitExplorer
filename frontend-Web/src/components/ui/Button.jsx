@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import './Button.css';
 
-export default function Button({
+function Button({
   children,
   variant = 'primary',
   size = 'md',
@@ -74,3 +74,6 @@ Button.propTypes = {
   onClick: PropTypes.func,
   className: PropTypes.string,
 };
+
+export { Button };
+export default Button;
