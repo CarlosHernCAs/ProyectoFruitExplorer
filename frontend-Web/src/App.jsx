@@ -42,6 +42,8 @@ import FruitStats from "./pages/admin/FruitStats";
 import RecipeStats from "./pages/admin/RecipeStats";
 import UserStats from "./pages/admin/UserStats";
 import RegionStats from "./pages/admin/RegionStats";
+// Reconocimiento de Frutas
+import FruitRecognition from "./pages/FruitRecognition";
 
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";

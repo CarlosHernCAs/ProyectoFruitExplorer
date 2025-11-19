@@ -20,11 +20,11 @@ export default function RegionDetail() {
       setLoading(true);
       const [regionData, fruitsData] = await Promise.all([
         getRegionById(id),
-        getRegionFruits(id).catch(() => ({ frutas: [] }))
+        getRegionFruits(id).catch(() => ({ fruits: [] }))
       ]);
 
       setRegion(regionData.region);
-      setFruits(fruitsData.frutas || []);
+      setFruits(fruitsData.fruits || []);
     } catch (err) {
       setError("Error al cargar la región: " + err.message);
       console.error(err);

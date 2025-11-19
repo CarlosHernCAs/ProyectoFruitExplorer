@@ -12,9 +12,16 @@ export const AuthProvider = ({ children }) => {
     const savedToken = localStorage.getItem("token");
     const savedUser = localStorage.getItem("usuario");
 
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
+    if (savedToken && savedUser && savedUser !== "undefined") {
+      try {
+        setToken(savedToken);
+        setUser(JSON.parse(savedUser));
+      } catch (error) {
+        console.error("Error parsing saved user data:", error);
+        // Limpiar datos corruptos
+        localStorage.removeItem("token");
+        localStorage.removeItem("usuario");
+      }
     }
 
     // ✅ Marcar como cargado después de verificar localStorage
