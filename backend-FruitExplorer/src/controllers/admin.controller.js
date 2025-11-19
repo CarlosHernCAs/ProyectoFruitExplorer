@@ -337,6 +337,56 @@ export const exportUsers = async (req, res) => {
   }
 };
 
+/**
+ * GET /api/admin/export/regions?format=json|csv
+ * Exporta todas las regiones en JSON o CSV
+ */
+export const exportRegions = async (req, res) => {
+  try {
+    const { format = 'json' } = req.query;
+
+    const [regions] = await pool.query(`
+      SELECT
+        r.id,
+        r.name,
+        r.description,
+        r.created_at,
+        COUNT(DISTINCT fr.fruit_id) as fruit_count
+      FROM regions r
+      LEFT JOIN fruit_regions fr ON r.id = fr.region_id
+      GROUP BY r.id
+      ORDER BY r.name ASC
+    `);
+
+    if (format === 'csv') {
+      const headers = ['ID', 'Nombre', 'Descripción', 'Frutas', 'Fecha Creación'];
+      let csv = headers.join(',') + '\n';
+
+      regions.forEach(region => {
+        const row = [
+          region.id,
+          `"${region.name || ''}"`,
+          `"${(region.description || '').replace(/"/g, '""')}"`,
+          region.fruit_count,
+          region.created_at ? new Date(region.created_at).toISOString().split('T')[0] : ''
+        ];
+        csv += row.join(',') + '\n';
+      });
+
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', 'attachment; filename=regiones.csv');
+      return res.send('\uFEFF' + csv);
+    }
+
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', 'attachment; filename=regiones.json');
+    res.json(regions);
+  } catch (err) {
+    console.error('Error in exportRegions:', err);
+    res.status(500).json({ mensaje: 'Error al exportar regiones' });
+  }
+};
+
 // =========================================
 // VALIDACIÓN Y MANTENIMIENTO
 // =========================================
