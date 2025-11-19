@@ -1,8 +1,10 @@
 import { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
 
 export default function Login() {
   const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,15 +30,11 @@ export default function Login() {
         throw new Error(data.message || "Error al iniciar sesión ❌");
       }
 
-      // ✔ Guardar en contexto: token + usuario
+      // ✔ Guardar en contexto: token + usuario (esto ya guarda en localStorage)
       login(data.token, data.user);
 
-      // ✔ Guardar en localStorage
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("usuario", JSON.stringify(data.user));
-
-      // ✔ Redirigir a inicio
-      window.location.href = "/";
+      // ✔ Redirigir a inicio (sin recargar la página)
+      navigate("/", { replace: true });
     } catch (err) {
       console.error("❌ Error en login:", err);
       setError(err.message);

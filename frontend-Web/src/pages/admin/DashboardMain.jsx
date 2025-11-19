@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -14,6 +15,7 @@ import { getBasicStats, getOverview } from '../../services/admin/dashboardServic
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
 export default function DashboardMain() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
   const [overview, setOverview] = useState(null);
@@ -234,7 +236,7 @@ export default function DashboardMain() {
         <div className="quick-actions-grid">
           <button
             className="quick-action-btn"
-            onClick={() => window.location.href = '/admin/fruits/stats'}
+            onClick={() => navigate('/admin/stats/fruits')}
           >
             <Apple size={20} />
             <span>Estadísticas de Frutas</span>
@@ -243,7 +245,7 @@ export default function DashboardMain() {
 
           <button
             className="quick-action-btn"
-            onClick={() => window.location.href = '/admin/analytics'}
+            onClick={() => navigate('/admin/analytics')}
           >
             <Activity size={20} />
             <span>Analytics Avanzados</span>
@@ -252,7 +254,7 @@ export default function DashboardMain() {
 
           <button
             className="quick-action-btn"
-            onClick={() => window.location.href = '/admin/tools'}
+            onClick={() => navigate('/admin/tools')}
           >
             <TrendingUp size={20} />
             <span>Herramientas Admin</span>
@@ -261,7 +263,7 @@ export default function DashboardMain() {
 
           <button
             className="quick-action-btn"
-            onClick={() => window.location.href = '/fruits/add'}
+            onClick={() => navigate('/fruits/add')}
           >
             <Apple size={20} />
             <span>Agregar Nueva Fruta</span>
