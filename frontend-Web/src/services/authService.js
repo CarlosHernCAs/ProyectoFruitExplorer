@@ -1,29 +1,64 @@
-import { apiFetch } from "./api";
+import api from '../api/axios';
 
-export const login = async (email, password) => {
-  const data = await apiFetch("/auth/login", {
-    method: "POST",
-    body: JSON.stringify({ email, password }),
-  });
+/**
+ * Servicio de autenticación
+ */
 
-  // 👉 Guardamos token + usuario correctamente
-  localStorage.setItem("token", data.token);
-  localStorage.setItem("usuario", JSON.stringify(data.user));
-
-  return data; // devuelve { token, user }
+/**
+ * Registrar un nuevo usuario
+ */
+export const register = async (userData) => {
+  try {
+    const response = await api.post('/auth/register', userData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
 };
 
-export const register = async (email, password, display_name) => {
-  const data = await apiFetch("/auth/register", {
-    method: "POST",
-    body: JSON.stringify({ email, password, display_name }),
-  });
-
-  // 👉 El register no devuelve token ni user (según tu backend)
-  return data;
+/**
+ * Iniciar sesión
+ */
+export const login = async (credentials) => {
+  try {
+    const response = await api.post('/auth/login', credentials);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
 };
 
-export const logout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("usuario");
+/**
+ * Cerrar sesión
+ */
+export const logout = async () => {
+  try {
+    const response = await api.post('/auth/logout');
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
+    return response.data;
+  } catch (error) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
+    throw error.response?.data || error;
+  }
+};
+
+/**
+ * Obtener perfil del usuario actual
+ */
+export const getProfile = async () => {
+  try {
+    const response = await api.get('/auth/profile');
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+export default {
+  register,
+  login,
+  logout,
+  getProfile,
 };

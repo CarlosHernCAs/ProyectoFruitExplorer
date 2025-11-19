@@ -11,7 +11,8 @@ import {
   Users,
   LogOut,
   Menu,
-  X
+  X,
+  Camera
 } from 'lucide-react';
 import { AuthContext } from '../../context/AuthContext';
 import './Sidebar.css';
@@ -25,6 +26,7 @@ export default function Sidebar({ isOpen, onToggle }) {
       items: [
         { path: '/', icon: Home, label: 'Inicio' },
         { path: '/fruits', icon: Apple, label: 'Frutas' },
+        { path: '/recognize', icon: Camera, label: 'Reconocer Fruta' },
         { path: '/recipes', icon: BookOpen, label: 'Recetas' },
         { path: '/regions', icon: MapPin, label: 'Regiones' },
       ]
