@@ -18,7 +18,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Cliente API mejorado con:
- * - Detección automática de emulador/dispositivo físico
  * - Configuración de timeouts personalizables
  * - Logging condicional según modo debug/release
  * - Verificación de conectividad
@@ -51,7 +50,6 @@ public class ApiClient {
         String baseUrl = Constants.API_BASE_URL;
         Log.d(TAG, "Inicializando API Client con URL: " + baseUrl);
         Log.d(TAG, "Modo: " + (BuildConfig.DEBUG ? "DEBUG" : "RELEASE"));
-        Log.d(TAG, "Emulador detectado: " + isRunningOnEmulator());
 
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -110,21 +108,6 @@ public class ApiClient {
             return activeNetworkInfo != null && activeNetworkInfo.isConnected();
         }
         return false;
-    }
-
-    /**
-     * Detecta si está corriendo en un emulador
-     * (Duplicado de Constants para logging)
-     */
-    private static boolean isRunningOnEmulator() {
-        return android.os.Build.FINGERPRINT.startsWith("generic")
-                || android.os.Build.FINGERPRINT.startsWith("unknown")
-                || android.os.Build.MODEL.contains("google_sdk")
-                || android.os.Build.MODEL.contains("Emulator")
-                || android.os.Build.MODEL.contains("Android SDK built for x86")
-                || android.os.Build.MANUFACTURER.contains("Genymotion")
-                || (android.os.Build.BRAND.startsWith("generic") && android.os.Build.DEVICE.startsWith("generic"))
-                || "google_sdk".equals(android.os.Build.PRODUCT);
     }
 
     /**
