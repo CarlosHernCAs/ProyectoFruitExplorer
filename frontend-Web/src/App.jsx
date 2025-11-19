@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 
 import "./App.css";
+import "./styles/dashboard.css";
 import Login from "./login";
 import Register from "./register";
 import Home from "./Home";
@@ -32,8 +33,18 @@ import EditRegion from "./pages/EditRegion";
 // Usuarios
 import UsersPage from "./pages/UsersPage";
 
+// Admin Dashboard
+import DashboardMain from "./pages/admin/DashboardMain";
+import Analytics from "./pages/admin/Analytics";
+import AdminTools from "./pages/admin/AdminTools";
+import FruitStats from "./pages/admin/FruitStats";
+import RecipeStats from "./pages/admin/RecipeStats";
+import UserStats from "./pages/admin/UserStats";
+import RegionStats from "./pages/admin/RegionStats";
+
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
+import { Toaster } from "react-hot-toast";
 
 // 🔒 RUTA PROTEGIDA
 function ProtectedRoute({ children }) {
@@ -46,9 +57,11 @@ function App() {
   const { token } = useContext(AuthContext);
 
   return (
-    <Router>
-      {/* ----------- HEADER ----------- */}
-      <header>
+    <>
+      <Toaster position="top-right" reverseOrder={false} />
+      <Router>
+        {/* ----------- HEADER ----------- */}
+        <header>
         🍓 FruitExplorer
         <nav>
           <Link to="/">Inicio</Link>
@@ -61,6 +74,9 @@ function App() {
           {token && (
             <>
               <Link to="/home">Admin</Link>
+              <Link to="/admin/dashboard">Dashboard</Link>
+              <Link to="/admin/analytics">Analytics</Link>
+              <Link to="/admin/tools">Herramientas</Link>
               <Link to="/users">Usuarios</Link>
             </>
           )}
@@ -180,12 +196,71 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* ADMIN DASHBOARD - Solo admin */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardMain />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/analytics"
+            element={
+              <ProtectedRoute>
+                <Analytics />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/tools"
+            element={
+              <ProtectedRoute>
+                <AdminTools />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/stats/fruits"
+            element={
+              <ProtectedRoute>
+                <FruitStats />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/stats/recipes"
+            element={
+              <ProtectedRoute>
+                <RecipeStats />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/stats/users"
+            element={
+              <ProtectedRoute>
+                <UserStats />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/stats/regions"
+            element={
+              <ProtectedRoute>
+                <RegionStats />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </main>
 
       {/* ----------- FOOTER ----------- */}
       <footer>© 2025 FruitExplorer | Desarrollado con 💚</footer>
-    </Router>
+      </Router>
+    </>
   );
 }
 
