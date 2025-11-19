@@ -1,10 +1,11 @@
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { apiFetch } from "../services/apiFetch";
+import { getAllUsers, registerUser, deleteUser } from "../services/userService";
 
 export default function UsersPage() {
   const { token, logout } = useContext(AuthContext);
   const [users, setUsers] = useState([]);
+  const [deleting, setDeleting] = useState(null);
 
   const [form, setForm] = useState({
     username: "",
@@ -20,10 +21,11 @@ export default function UsersPage() {
 
   const loadUsers = async () => {
     try {
-      const data = await apiFetch("/users");
+      const data = await getAllUsers();
       setUsers(data.usuarios);
     } catch (err) {
       console.error("Error cargando usuarios:", err);
+      setMessage("Error al cargar usuarios: " + err.message);
     }
   };
 
@@ -32,16 +34,29 @@ export default function UsersPage() {
     setMessage("");
 
     try {
-      await apiFetch("/auth/register", {
-        method: "POST",
-        body: JSON.stringify(form),
-      });
-
-      setMessage("Usuario creado correctamente ✓");
+      await registerUser(form);
+      setMessage("✅ Usuario creado correctamente");
       setForm({ username: "", email: "", password: "" });
       loadUsers();
     } catch (err) {
-      setMessage("Error al crear usuario: " + err.message);
+      setMessage("❌ Error al crear usuario: " + err.message);
+    }
+  };
+
+  const handleDelete = async (userId) => {
+    if (!window.confirm("¿Estás seguro de eliminar este usuario?")) {
+      return;
+    }
+
+    setDeleting(userId);
+    try {
+      await deleteUser(userId);
+      setMessage("✅ Usuario eliminado correctamente");
+      loadUsers();
+    } catch (err) {
+      setMessage("❌ Error al eliminar usuario: " + err.message);
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -52,6 +67,20 @@ export default function UsersPage() {
       </h1>
 
       {/* LISTA */}
+      {message && (
+        <div
+          style={{
+            padding: "12px",
+            borderRadius: "8px",
+            marginBottom: "20px",
+            backgroundColor: message.startsWith("✅") ? "#d4edda" : "#f8d7da",
+            color: message.startsWith("✅") ? "#155724" : "#721c24",
+          }}
+        >
+          {message}
+        </div>
+      )}
+
       <div className="users-table-wrapper">
         <table className="users-table mb-6">
           <thead>
@@ -60,6 +89,7 @@ export default function UsersPage() {
               <th className="border p-2">Nombre</th>
               <th className="border p-2">Correo</th>
               <th className="border p-2">Rol</th>
+              <th className="border p-2">Acciones</th>
             </tr>
           </thead>
 
@@ -70,6 +100,20 @@ export default function UsersPage() {
                 <td className="border p-2">{u.display_name}</td>
                 <td className="border p-2">{u.email}</td>
                 <td className="border p-2">{u.role || "Sin rol"}</td>
+                <td className="border p-2" style={{ textAlign: "center" }}>
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDelete(u.id)}
+                    disabled={deleting === u.id}
+                    style={{
+                      padding: "6px 12px",
+                      fontSize: "0.85rem",
+                      backgroundColor: deleting === u.id ? "#ccc" : undefined,
+                    }}
+                  >
+                    {deleting === u.id ? "Eliminando..." : "🗑️ Eliminar"}
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -110,14 +154,10 @@ export default function UsersPage() {
           </button>
        
 
-        <button className="logout-btn mt-4" onClick={logout}>
-          Cerrar sesión
-        </button>
-         </form>
-
-        {message && (
-          <p className="mt-3 text-center text-sm text-purple-700">{message}</p>
-        )}
+          <button className="logout-btn mt-4" onClick={logout}>
+            Cerrar sesión
+          </button>
+        </form>
       </div>
     </div>
   );

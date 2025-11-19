@@ -9,10 +9,27 @@ import {
 import "./App.css";
 import Login from "./login";
 import Register from "./register";
-import Home from "./Home";           
+import Home from "./Home";
+
+// Frutas
 import FruitList from "./pages/FruitList";
+import FruitDetail from "./pages/FruitDetail";
 import AddFruit from "./pages/AddFruit";
 import EditFruit from "./pages/EditFruit";
+
+// Recetas
+import RecipeList from "./pages/RecipeList";
+import RecipeDetail from "./pages/RecipeDetail";
+import AddRecipe from "./pages/AddRecipe";
+import EditRecipe from "./pages/EditRecipe";
+
+// Regiones
+import RegionList from "./pages/RegionList";
+import RegionDetail from "./pages/RegionDetail";
+import AddRegion from "./pages/AddRegion";
+import EditRegion from "./pages/EditRegion";
+
+// Usuarios
 import UsersPage from "./pages/UsersPage";
 
 import { useContext } from "react";
@@ -35,9 +52,9 @@ function App() {
         🍓 FruitExplorer
         <nav>
           <Link to="/">Inicio</Link>
-
-          {/* 🔄 CAMBIO: YA NO SE MUESTRA REGISTRO */}
           <Link to="/fruits">Frutas</Link>
+          <Link to="/recipes">Recetas</Link>
+          <Link to="/regions">Regiones</Link>
 
           {!token && <Link to="/login">Login</Link>}
 
@@ -74,7 +91,7 @@ function App() {
             }
           />
 
-          {/* LOGIN (mantengo registro por si lo necesitas luego, pero ya no aparece en menú) */}
+          {/* AUTENTICACIÓN */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
 
@@ -88,10 +105,11 @@ function App() {
             }
           />
 
-          {/* FRUTAS – 🔓 YA NO PROTEGIDO, TODOS PUEDEN VER */}
+          {/* FRUTAS - Rutas públicas */}
           <Route path="/fruits" element={<FruitList />} />
+          <Route path="/fruits/:id" element={<FruitDetail />} />
 
-          {/* CRUD de frutas solo para admin */}
+          {/* FRUTAS - Rutas protegidas (admin) */}
           <Route
             path="/fruits/add"
             element={
@@ -100,7 +118,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/fruits/edit/:id"
             element={
@@ -110,7 +127,51 @@ function App() {
             }
           />
 
-          {/* USERS PAGE */}
+          {/* RECETAS - Rutas públicas */}
+          <Route path="/recipes" element={<RecipeList />} />
+          <Route path="/recipes/:id" element={<RecipeDetail />} />
+
+          {/* RECETAS - Rutas protegidas (admin) */}
+          <Route
+            path="/recipes/add"
+            element={
+              <ProtectedRoute>
+                <AddRecipe />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/recipes/edit/:id"
+            element={
+              <ProtectedRoute>
+                <EditRecipe />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* REGIONES - Rutas públicas */}
+          <Route path="/regions" element={<RegionList />} />
+          <Route path="/regions/:id" element={<RegionDetail />} />
+
+          {/* REGIONES - Rutas protegidas (admin) */}
+          <Route
+            path="/regions/add"
+            element={
+              <ProtectedRoute>
+                <AddRegion />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/regions/edit/:id"
+            element={
+              <ProtectedRoute>
+                <EditRegion />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* USUARIOS - Solo admin */}
           <Route
             path="/users"
             element={
