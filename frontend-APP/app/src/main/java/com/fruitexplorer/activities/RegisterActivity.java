@@ -60,22 +60,18 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Guardar la sesión del nuevo usuario
                     sessionManager.createLoginSession(response.body().getToken(), response.body().getUsuario());
 
-                    // Como es un nuevo registro, siempre vamos a la pantalla de bienvenida
                     Intent intent = new Intent(RegisterActivity.this, WelcomeActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
-                    // Manejar error de la API (ej. usuario ya existe)
                     Toast.makeText(RegisterActivity.this, "Error en el registro. Código: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<AuthResponse> call, Throwable t) {
-                // Manejar error de red
                 Log.e("RegisterActivity", "Error de red: ", t);
                 Toast.makeText(RegisterActivity.this, "Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }

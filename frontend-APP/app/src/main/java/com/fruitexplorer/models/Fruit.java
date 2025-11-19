@@ -94,7 +94,7 @@ public class Fruit implements Parcelable {
         if (nutritional == null) {
             return new com.google.gson.JsonObject();
         }
-        return nutritional; // Esto ya es un JsonObject, no necesita parseo
+        return nutritional; 
     }
 
     public String getImageUrl() {

@@ -12,13 +12,13 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,6 +31,7 @@ import com.fruitexplorer.models.FruitListResponse;
 import com.fruitexplorer.utils.SessionManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,7 @@ public class ExploreActivity extends AppCompatActivity implements FruitAdapter.O
     private List<Fruit> currentFruits = new ArrayList<>();
     private FloatingActionButton fabCamera;
     private BottomNavigationView bottomNavigationView;
-    private ProgressBar progressBar;
+    private ShimmerFrameLayout shimmerLayout;
     private LinearLayout emptyStateLayout;
     private ImageView emptyStateIcon;
     private TextView emptyStateTextView;
@@ -61,19 +62,16 @@ public class ExploreActivity extends AppCompatActivity implements FruitAdapter.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_explore);
 
-        // Configurar la Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // El título se establece desde el XML con app:title="@string/app_name"
 
-        // Inicialización
         sessionManager = new SessionManager(this);
         apiService = ApiClient.getApiService(this);
 
         fruitsRecyclerView = findViewById(R.id.fruitsRecyclerView);
         fabCamera = findViewById(R.id.fabCamera);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        progressBar = findViewById(R.id.progressBar);
+        shimmerLayout = findViewById(R.id.shimmerLayout);
         emptyStateLayout = findViewById(R.id.emptyStateLayout);
         emptyStateIcon = findViewById(R.id.emptyStateIcon);
         emptyStateTextView = findViewById(R.id.emptyStateTextView);
@@ -81,7 +79,6 @@ public class ExploreActivity extends AppCompatActivity implements FruitAdapter.O
         setupRecyclerView();
         setupBottomNavigation();
 
-        // Cargar todas las frutas al iniciar
         fetchFruits(null);
     }
 
@@ -95,23 +92,20 @@ public class ExploreActivity extends AppCompatActivity implements FruitAdapter.O
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // Opcional: manejar la búsqueda al presionar "enter"
                 handler.removeCallbacksAndMessages(null);
                 fetchFruits(query);
-                searchView.clearFocus(); // Ocultar el teclado
+                searchView.clearFocus();
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                // Búsqueda en tiempo real con un pequeño retraso (debounce)
                 handler.removeCallbacksAndMessages(null);
-                handler.postDelayed(() -> fetchFruits(newText), 300); // 300ms de retraso
+                handler.postDelayed(() -> fetchFruits(newText), 300);
                 return true;
             }
         });
 
-        // Controlar la expansión de la AppBarLayout al abrir/cerrar la búsqueda
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -122,7 +116,7 @@ public class ExploreActivity extends AppCompatActivity implements FruitAdapter.O
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 setAppBarExpanded(true, false);
-                invalidateOptionsMenu(); // Opcional: redibuja el menú si es necesario
+                invalidateOptionsMenu();
                 return true;
             }
         });
@@ -134,7 +128,6 @@ public class ExploreActivity extends AppCompatActivity implements FruitAdapter.O
         com.google.android.material.appbar.AppBarLayout appBarLayout = findViewById(R.id.appBarLayout);
         appBarLayout.setExpanded(expanded, true);
 
-        // Habilitar o deshabilitar el comportamiento de scroll
         androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams params =
                 (androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
         com.google.android.material.appbar.AppBarLayout.Behavior behavior =
@@ -144,7 +137,7 @@ public class ExploreActivity extends AppCompatActivity implements FruitAdapter.O
             behavior.setDragCallback(new com.google.android.material.appbar.AppBarLayout.Behavior.DragCallback() {
                 @Override
                 public boolean canDrag(com.google.android.material.appbar.AppBarLayout appBarLayout) {
-                    return !isSearchActive; // No permitir arrastrar si la búsqueda está activa
+                    return !isSearchActive;
                 }
             });
         }
@@ -155,7 +148,6 @@ public class ExploreActivity extends AppCompatActivity implements FruitAdapter.O
         fruitAdapter = new FruitAdapter(this, new ArrayList<>(), this);
         fruitsRecyclerView.setAdapter(fruitAdapter);
         
-        // Aplicar animación de entrada
         LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_animation_fall_down);
         fruitsRecyclerView.setLayoutAnimation(animation);
     }
@@ -168,10 +160,9 @@ public class ExploreActivity extends AppCompatActivity implements FruitAdapter.O
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.navigation_regions) {
-                startActivity(new Intent(this, RegionsActivity.class)); // Esto ya está correcto, solo confirmamos.
+                startActivity(new Intent(this, RegionsActivity.class));
                 return true;
             } else if (itemId == R.id.navigation_recipes) {
-                // Cambiamos el Toast para iniciar la actividad de recetas
                 startActivity(new Intent(this, RecipesActivity.class));
                 return true;
             }
@@ -180,13 +171,20 @@ public class ExploreActivity extends AppCompatActivity implements FruitAdapter.O
     }
 
     private void showLoading(boolean show) {
-        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-        fruitsRecyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
-        emptyStateLayout.setVisibility(View.GONE);
+        if (show) {
+            shimmerLayout.setVisibility(View.VISIBLE);
+            shimmerLayout.startShimmer();
+            fruitsRecyclerView.setVisibility(View.GONE);
+            emptyStateLayout.setVisibility(View.GONE);
+        } else {
+            shimmerLayout.stopShimmer();
+            shimmerLayout.setVisibility(View.GONE);
+            fruitsRecyclerView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void showEmptyState(String message, int iconResId) {
-        progressBar.setVisibility(View.GONE);
+        shimmerLayout.setVisibility(View.GONE);
         fruitsRecyclerView.setVisibility(View.GONE);
         emptyStateLayout.setVisibility(View.VISIBLE);
         emptyStateTextView.setText(message);
@@ -208,10 +206,10 @@ public class ExploreActivity extends AppCompatActivity implements FruitAdapter.O
                     fruitAdapter.updateFruits(currentFruits);
 
                     if (currentFruits.isEmpty()) {
-                        showEmptyState("No se encontraron frutas.", R.drawable.ic_leaf);
+                        showEmptyState("No se encontraron frutas.", R.drawable.ic_public);
                     }
                 } else {
-                    showEmptyState("Error al cargar frutas.", R.drawable.ic_leaf);
+                    showEmptyState("Error al cargar frutas.", R.drawable.ic_public);
                     Log.e(TAG, "Error al cargar frutas: " + response.code() + " - " + response.message());
                 }
             }
@@ -219,16 +217,23 @@ public class ExploreActivity extends AppCompatActivity implements FruitAdapter.O
             @Override
             public void onFailure(Call<FruitListResponse> call, Throwable t) {
                 showLoading(false);
-                showEmptyState("Error de conexión.", R.drawable.ic_leaf);
+                showEmptyState("Error de conexión.", R.drawable.ic_public);
                 Log.e(TAG, "Error de red al cargar frutas: ", t);
             }
         });
     }
 
     @Override
-    public void onFruitClick(Fruit fruit) {
+    public void onFruitClick(Fruit fruit, ImageView fruitImageView) {
         Intent intent = new Intent(this, FruitDetailActivity.class);
         intent.putExtra(FruitDetailActivity.EXTRA_FRUIT_SLUG, fruit.getSlug());
-        startActivity(intent);
+
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                this,
+                fruitImageView,
+                "fruit_image"
+        );
+
+        startActivity(intent, options.toBundle());
     }
 }

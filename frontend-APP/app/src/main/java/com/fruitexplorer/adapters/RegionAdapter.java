@@ -18,18 +18,18 @@ import java.util.List;
 
 public class RegionAdapter extends RecyclerView.Adapter<RegionAdapter.RegionViewHolder> {
 
-    private final Context context;
-    private final List<Region> regionList;
-    private final OnRegionClickListener listener;
+    private Context context;
+    private List<Region> regionList;
+    private OnRegionClickListener onRegionClickListener;
 
     public interface OnRegionClickListener {
         void onRegionClick(Region region);
     }
 
-    public RegionAdapter(Context context, List<Region> regionList, OnRegionClickListener listener) {
+    public RegionAdapter(Context context, List<Region> regionList, OnRegionClickListener onRegionClickListener) {
         this.context = context;
         this.regionList = regionList;
-        this.listener = listener;
+        this.onRegionClickListener = onRegionClickListener;
     }
 
     public void updateRegions(List<Region> newRegionList) {
@@ -41,14 +41,24 @@ public class RegionAdapter extends RecyclerView.Adapter<RegionAdapter.RegionView
     @NonNull
     @Override
     public RegionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_region, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.list_item_region, parent, false);
         return new RegionViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RegionViewHolder holder, int position) {
         Region region = regionList.get(position);
-        holder.bind(region, listener);
+        holder.regionName.setText(region.getName());
+
+        Glide.with(context)
+                .load(region.getImageUrl())
+                .into(holder.regionImage);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (onRegionClickListener != null) {
+                onRegionClickListener.onRegionClick(region);
+            }
+        });
     }
 
     @Override
@@ -56,25 +66,14 @@ public class RegionAdapter extends RecyclerView.Adapter<RegionAdapter.RegionView
         return regionList.size();
     }
 
-    static class RegionViewHolder extends RecyclerView.ViewHolder {
-        ImageView regionImageView;
-        TextView regionNameTextView;
+    public static class RegionViewHolder extends RecyclerView.ViewHolder {
+        ImageView regionImage;
+        TextView regionName;
 
         public RegionViewHolder(@NonNull View itemView) {
             super(itemView);
-            regionImageView = itemView.findViewById(R.id.regionImageView);
-            regionNameTextView = itemView.findViewById(R.id.regionNameTextView);
-        }
-
-        public void bind(final Region region, final OnRegionClickListener listener) {
-            regionNameTextView.setText(region.getName());
-            Glide.with(itemView.getContext())
-                    .load(region.getImageUrl())
-                    .placeholder(android.R.drawable.ic_menu_gallery) // Usar un placeholder estándar
-                    .error(android.R.drawable.ic_menu_gallery)       // Usar un placeholder de error estándar
-                    .into(regionImageView);
-
-            itemView.setOnClickListener(v -> listener.onRegionClick(region));
+            regionImage = itemView.findViewById(R.id.regionImageView);
+            regionName = itemView.findViewById(R.id.regionNameTextView);
         }
     }
 }

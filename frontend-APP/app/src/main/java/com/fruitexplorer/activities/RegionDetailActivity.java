@@ -9,8 +9,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -78,11 +79,17 @@ public class RegionDetailActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        fruitsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        fruitAdapter = new FruitAdapter(this, new ArrayList<>(), fruit -> {
+        fruitsRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        fruitAdapter = new FruitAdapter(this, new ArrayList<>(), (fruit, fruitImageView) -> {
             Intent intent = new Intent(this, FruitDetailActivity.class);
             intent.putExtra(FruitDetailActivity.EXTRA_FRUIT_SLUG, fruit.getSlug());
-            startActivity(intent);
+
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    this,
+                    fruitImageView,
+                    "fruit_image"
+            );
+            startActivity(intent, options.toBundle());
         });
         fruitsRecyclerView.setAdapter(fruitAdapter);
     }

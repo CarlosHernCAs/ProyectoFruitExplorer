@@ -34,7 +34,14 @@
                 app:layout_collapseMode="parallax"
                 tools:src="@tools:sample/backgrounds/scenic" />
 
-            <androidx.appcompat.widget.Toolbar
+            <!-- Degradado para mejorar la legibilidad del título expandido -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/gradient_overlay" />
+
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
@@ -53,16 +60,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="16dp">
+            android:orientation="vertical"            
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="16dp">
 
             <!-- Card para Nombres (RESTAURADA) -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                style="?attr/materialCardViewFilledStyle">
+                style="?attr/materialCardViewElevatedStyle">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -73,26 +79,22 @@
                     <TextView
                         android:id="@+id/commonNameTextView"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceHeadline5"
-                        android:textStyle="bold" />
+                        android:layout_height="wrap_content"                        
+                        android:textAppearance="?attr/textAppearanceTitleLarge" />
 
                     <TextView
                         android:id="@+id/scientificNameTextView"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceBody2"
-                        android:textStyle="italic" />
+                        android:layout_height="wrap_content"                        
+                        android:textAppearance="?attr/textAppearanceBodyMedium" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
-                style="?attr/materialCardViewFilledStyle">
+                android:layout_marginTop="12dp"
+                style="?attr/materialCardViewElevatedStyle">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -102,10 +104,9 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Descripción"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
+                        android:layout_height="wrap_content"                        
+                        android:text="Descripción"                        
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
                         app:drawableStartCompat="@drawable/ic_book"
                         android:drawablePadding="8dp"/>
 
@@ -114,20 +115,18 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:lineSpacingExtra="4dp"
-                        android:textSize="16sp"
+                        android:lineSpacingExtra="4dp"                        
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
                         tools:text="Aquí va una descripción larga y detallada sobre la fruta, su sabor, apariencia, y otros datos relevantes que vienen desde la API." />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/nutritionalCard"
+                style="?attr/materialCardViewElevatedStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
-                style="?attr/materialCardViewFilledStyle">
+                android:layout_marginTop="12dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -139,9 +138,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Datos Nutricionales"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        app:drawableStartCompat="@drawable/ic_leaf"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        app:drawableStartCompat="@drawable/ic_analytics"
                         android:drawablePadding="8dp"/>
 
                     <GridLayout
@@ -156,13 +154,12 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/recipesCard"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
+                android:layout_height="wrap_content"                
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="16dp"
                 android:visibility="gone"
-                tools:visibility="visible"
-                style="?attr/materialCardViewFilledStyle">
+                style="?attr/materialCardViewElevatedStyle"
+                tools:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -173,11 +170,10 @@
                     <TextView
                         android:id="@+id/recipesTitleTextView"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Recetas Relacionadas"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:drawableStart="@android:drawable/ic_menu_slideshow"
+                        android:layout_height="wrap_content"                        
+                        android:text="Recetas Relacionadas"                        
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        app:drawableStartCompat="@drawable/ic_book"
                         android:drawablePadding="8dp"/>
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -195,8 +191,8 @@
         android:id="@+id/fabSpeak"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:src="@android:drawable/ic_btn_speak_now"
+        android:layout_marginEnd="16dp"        
+        app:srcCompat="@drawable/ic_speak"
         android:contentDescription="Leer descripción en voz alta"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"/>

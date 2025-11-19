@@ -49,13 +49,10 @@ public class SessionManager {
     }
 
     public void logoutUser() {
-        // Limpiar todos los datos de SharedPreferences
         editor.clear();
         editor.commit();
 
-        // Redirigir al usuario a LoginActivity
         Intent i = new Intent(context, LoginActivity.class);
-        // Añadir flags para limpiar el stack de actividades
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(i);

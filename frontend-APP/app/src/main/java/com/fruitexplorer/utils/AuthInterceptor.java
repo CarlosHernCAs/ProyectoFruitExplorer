@@ -1,6 +1,7 @@
 package com.fruitexplorer.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import androidx.annotation.NonNull;
 import java.io.IOException;
 import okhttp3.Interceptor;
@@ -8,10 +9,11 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class AuthInterceptor implements Interceptor {
-
+    private final Context context;
     private final SessionManager sessionManager;
 
     public AuthInterceptor(Context context) {
+        this.context = context.getApplicationContext();
         this.sessionManager = new SessionManager(context);
     }
 
@@ -21,9 +23,6 @@ public class AuthInterceptor implements Interceptor {
         Request originalRequest = chain.request();
         Request.Builder requestBuilder = originalRequest.newBuilder();
         String path = originalRequest.url().encodedPath();
-
-        // CORRECCIÓN: Solo añadimos el token si el usuario está logueado
-        // Y si la ruta NO es de registro o login.
         if (sessionManager.isLoggedIn() && !path.endsWith("/register") && !path.endsWith("/login")) {
             String token = sessionManager.getToken();
             if (token != null) {
@@ -31,7 +30,13 @@ public class AuthInterceptor implements Interceptor {
             }
         }
 
-        // Continuamos con la petición, ya sea la original o la modificada con el token.
-        return chain.proceed(requestBuilder.build());
+        Request request = requestBuilder.build();
+        Response response = chain.proceed(request);
+
+        if (response.code() == 401 || response.code() == 403) {
+            sessionManager.logoutUser();
+        }
+
+        return response;
     }
 }

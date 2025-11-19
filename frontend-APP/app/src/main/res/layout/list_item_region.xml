@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    style="?attr/materialCardViewElevatedStyle">
 
-    <RelativeLayout
+    <!-- Usamos FrameLayout para superponer vistas de forma más simple -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="180dp">
 
@@ -15,21 +16,27 @@
             android:id="@+id/regionImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:contentDescription="@string/app_name" />
+            android:scaleType="centerCrop"            
+            android:contentDescription="@string/app_name"
+            tools:src="@tools:sample/backgrounds/scenic"/>
+
+        <!-- Scrim para asegurar la legibilidad del texto -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/scrim"
+            android:alpha="0.4"/>
 
         <TextView
             android:id="@+id/regionNameTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="#80000000"
+            android:layout_gravity="bottom"
             android:padding="12dp"
-            android:text="Nombre de la Región"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textAppearance="?attr/textAppearanceTitleLarge"
+            android:textColor="?attr/colorOnPrimary"
+            tools:text="Nombre de la Región" />
 
-    </RelativeLayout>
+    </FrameLayout>
 
 </com.google.android.material.card.MaterialCardView>

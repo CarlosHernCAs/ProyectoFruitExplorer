@@ -5,9 +5,8 @@ import android.util.Log;
 
 import com.fruitexplorer.utils.AuthInterceptor;
 import com.fruitexplorer.utils.Constants;
-
-import org.osmdroid.library.BuildConfig;
-
+import com.fruitexplorer.BuildConfig; // <<< CORRECCIÓN: Usar el BuildConfig de tu app
+ 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -15,11 +14,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
     private static final String BASE_URL = Constants.API_BASE_URL;
-    private static ApiService apiService;
+    private static Retrofit retrofit = null; // <<< MEJORA: Usar una instancia de Retrofit
 
     public static ApiService getApiService(Context context) {
-        if (apiService == null) {
+        // MEJORA: Usar un singleton para Retrofit en lugar de para ApiService
+        if (retrofit == null) {
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            // CORRECCIÓN: Usar el BuildConfig de tu propia aplicación, no el de una librería externa.
             loggingInterceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
 
             OkHttpClient client = new OkHttpClient.Builder()
@@ -27,13 +28,14 @@ public class ApiClient {
                     .addInterceptor(loggingInterceptor)
                     .build();
 
-            Retrofit retrofit = new Retrofit.Builder()
+            retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(client)
                     .build();
-            apiService = retrofit.create(ApiService.class);
         }
-        return apiService;
+        // Siempre creamos una nueva instancia del servicio desde Retrofit.
+        // Retrofit se encarga de que esto sea eficiente.
+        return retrofit.create(ApiService.class);
     }
 }

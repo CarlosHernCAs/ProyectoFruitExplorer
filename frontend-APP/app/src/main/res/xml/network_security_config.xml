@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Permite el tráfico HTTP (sin cifrar) solo para tu IP local de desarrollo -->
+    <domain-config cleartextTrafficPermitted="true">
+        <!--
+            ¡IMPORTANTE! Reemplaza "192.168.X.X" con la dirección IP
+            de la computadora donde está corriendo tu servidor XAMPP.
+        -->
+        <domain includeSubdomains="true">192.168.0.100</domain> <!-- Ejemplo de IP -->
+    </domain-config>
+</network-security-config>

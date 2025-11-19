@@ -47,7 +47,7 @@ export const getRecipeById = async (req, res) => {
       [id]
     );
 
-    res.status(200).json({ receta: rows[0], pasos: steps });
+    res.status(200).json({ recipe: rows[0], steps: steps });
   } catch (err) {
     console.error(err);
     res.status(500).json({ mensaje: 'Error al obtener la receta' });

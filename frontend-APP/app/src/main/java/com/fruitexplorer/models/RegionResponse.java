@@ -5,7 +5,7 @@ import java.util.List;
 
 public class RegionResponse {
 
-    @SerializedName("regions") // Corregido para que coincida con el backend
+    @SerializedName("regions") 
     private List<Region> regions;
 
     public List<Region> getRegions() {

@@ -35,7 +35,6 @@ public class RecipesActivity extends AppCompatActivity {
     private RecipeAdapter recipeAdapter;
     private ApiService apiService;
     private ProgressBar progressBar;
-    // Handler para el retraso en la búsqueda (debounce)
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
@@ -53,12 +52,12 @@ public class RecipesActivity extends AppCompatActivity {
         apiService = ApiClient.getApiService(this);
 
         setupRecyclerView();
-        fetchRecipes(null); // Cargar todas las recetas al inicio
+        fetchRecipes(null);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.search_menu, menu); // Reutilizamos un menú de búsqueda genérico
+        getMenuInflater().inflate(R.menu.search_menu, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
@@ -74,7 +73,7 @@ public class RecipesActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 handler.removeCallbacksAndMessages(null);
-                handler.postDelayed(() -> fetchRecipes(newText), 300); // 300ms de retraso
+                handler.postDelayed(() -> fetchRecipes(newText), 300);
                 return true;
             }
         });

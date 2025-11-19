@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/navigation_map"
-        android:icon="@drawable/ic_leaf"
+        android:icon="@drawable/ic_explore"
         android:title="Mapa" />
 
     <item

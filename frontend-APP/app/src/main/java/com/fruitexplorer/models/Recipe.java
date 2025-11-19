@@ -6,12 +6,12 @@ import com.google.gson.annotations.SerializedName;
 
 public class Recipe implements Parcelable {
     private int id;
-    @SerializedName("title") // Coincide con la columna de la BD
+    @SerializedName("title") 
     private String title;
     private String description;
     @SerializedName("image_url")
     private String imageUrl;
-    private String source; // Campo que sí existe en la BD
+    private String source; 
 
     protected Recipe(Parcel in) {
         id = in.readInt();

@@ -12,7 +12,7 @@ import com.fruitexplorer.utils.SessionManager;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private static final int SPLASH_DELAY = 2000; // 2 segundos
+    private static final int SPLASH_DELAY = 2000; 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class SplashActivity extends AppCompatActivity {
             }
 
             startActivity(intent);
-            finish(); // Cierra SplashActivity para que el usuario no pueda volver a ella
+            finish(); 
         }, SPLASH_DELAY);
     }
 }

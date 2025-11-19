@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/navigation_regions"
-        android:icon="@drawable/ic_leaf"
+        android:icon="@drawable/ic_public"
         android:title="Regiones" />
 
     <item

@@ -23,7 +23,7 @@ public class FruitAdapter extends RecyclerView.Adapter<FruitAdapter.FruitViewHol
     private OnFruitClickListener listener;
 
     public interface OnFruitClickListener {
-        void onFruitClick(Fruit fruit);
+        void onFruitClick(Fruit fruit, ImageView fruitImageView);
     }
 
     public FruitAdapter(Context context, List<Fruit> fruitList, OnFruitClickListener listener) {
@@ -48,7 +48,8 @@ public class FruitAdapter extends RecyclerView.Adapter<FruitAdapter.FruitViewHol
     @Override
     public void onBindViewHolder(@NonNull FruitViewHolder holder, int position) {
         Fruit fruit = fruitList.get(position);
-        holder.bind(fruit, listener);
+        holder.bind(fruit);
+        holder.itemView.setOnClickListener(v -> listener.onFruitClick(fruit, holder.fruitImageView));
     }
 
     @Override
@@ -58,29 +59,23 @@ public class FruitAdapter extends RecyclerView.Adapter<FruitAdapter.FruitViewHol
 
     static class FruitViewHolder extends RecyclerView.ViewHolder {
         ImageView fruitImageView;
-        TextView fruitCommonNameTextView;
-        TextView fruitScientificNameTextView;
+        TextView fruitNameTextView;
 
         public FruitViewHolder(@NonNull View itemView) {
             super(itemView);
             fruitImageView = itemView.findViewById(R.id.fruitImageView);
-            // Corregimos los IDs para que coincidan con los de item_fruit.xml
-            fruitCommonNameTextView = itemView.findViewById(R.id.fruitCommonNameTextView);
-            fruitScientificNameTextView = itemView.findViewById(R.id.fruitScientificNameTextView);
+            fruitNameTextView = itemView.findViewById(R.id.fruitNameTextView);
         }
 
-        public void bind(final Fruit fruit, final OnFruitClickListener listener) {
-            // Asignamos los textos a las vistas correctas
-            fruitCommonNameTextView.setText(fruit.getCommonName());
-            fruitScientificNameTextView.setText(fruit.getScientificName());
+        public void bind(final Fruit fruit) {
+            fruitNameTextView.setText(fruit.getCommonName());
 
             Glide.with(itemView.getContext())
                     .load(fruit.getImageUrl())
-                    .placeholder(android.R.drawable.ic_menu_gallery) // Usar un placeholder estándar y seguro
-                    .error(android.R.drawable.ic_menu_gallery)       // Usar un placeholder de error estándar
+                    .placeholder(android.R.drawable.ic_menu_gallery)
+                    .error(android.R.drawable.ic_menu_gallery)
                     .into(fruitImageView);
 
-            itemView.setOnClickListener(v -> listener.onFruitClick(fruit));
         }
     }
 }
