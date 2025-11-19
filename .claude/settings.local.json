@@ -10,7 +10,10 @@
       "Bash(node check-gemini-models.js:*)",
       "Bash(npm run dev:*)",
       "Bash(timeout /t 5)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(ping:*)",
+      "Bash(cat:*)",
+      "Bash(node verificar-roles.js:*)"
     ],
     "deny": [],
     "ask": []

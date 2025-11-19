@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import './Input.css';
 
-export default function Input({
+function Input({
   label,
   type = 'text',
   value,
@@ -105,3 +105,6 @@ Input.propTypes = {
   fullWidth: PropTypes.bool,
   className: PropTypes.string,
 };
+
+export { Input };
+export default Input;

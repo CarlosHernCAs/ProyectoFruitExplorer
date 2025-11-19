@@ -308,7 +308,7 @@ export default function FruitRecognition() {
           </div>
           <div className="info-item">
             <span className="info-number">2</span>
-            <p>Nuestra IA analiza la imagen con GPT-4</p>
+            <p>Nuestra IA analiza la imagen</p>
           </div>
           <div className="info-item">
             <span className="info-number">3</span>

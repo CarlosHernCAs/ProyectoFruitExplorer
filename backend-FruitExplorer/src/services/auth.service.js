@@ -38,15 +38,16 @@ export const registerUser = async (email, password, display_name) => {
     [userId, roleId]
   );
 
-  // Crear token JWT
-  const token = jwt.sign({ id: userId, email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  // Crear token JWT con rol
+  const token = jwt.sign({ id: userId, email, role: 'user' }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
   return {
     token,
     usuario: {
       id: userId,
       email,
-      display_name
+      display_name,
+      role: 'user'  // ✅ Incluir el rol por defecto en el registro
     }
   };
 };
@@ -63,10 +64,22 @@ export const loginUser = async (email, password) => {
     throw new Error('Contraseña incorrecta');
   }
 
+  // 🔑 Obtener el rol del usuario
+  const [userRoles] = await pool.query(
+    `SELECT r.name as role_name
+     FROM user_roles ur
+     JOIN roles r ON ur.role_id = r.id
+     WHERE ur.user_id = ?
+     LIMIT 1`,
+    [user.id]
+  );
+
+  const role = userRoles.length > 0 ? userRoles[0].role_name : 'user';
+
   await pool.query('UPDATE users SET last_login = NOW() WHERE id = ?', [user.id]);
 
   const token = jwt.sign(
-    { id: user.id, email: user.email },
+    { id: user.id, email: user.email, role },
     process.env.JWT_SECRET,
     { expiresIn: '1h' }
   );
@@ -76,7 +89,8 @@ export const loginUser = async (email, password) => {
     usuario: {
       id: user.id,
       email: user.email,
-      display_name: user.display_name
+      display_name: user.display_name,
+      role: role  // ✅ Incluir el rol en la respuesta
     }
   };
 };

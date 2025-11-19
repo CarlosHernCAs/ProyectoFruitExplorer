@@ -11,7 +11,10 @@ import {
   Users,
   LogOut,
   Menu,
-  X
+  X,
+  Scan,
+  PieChart,
+  TrendingUp
 } from 'lucide-react';
 import { AuthContext } from '../../context/AuthContext';
 import './Sidebar.css';
@@ -27,15 +30,26 @@ export default function Sidebar({ isOpen, onToggle }) {
         { path: '/fruits', icon: Apple, label: 'Frutas' },
         { path: '/recipes', icon: BookOpen, label: 'Recetas' },
         { path: '/regions', icon: MapPin, label: 'Regiones' },
+        { path: '/recognition', icon: Scan, label: 'Reconocimiento' },
       ]
     },
-    ...(user ? [{
+    // Solo mostrar menú de administración si el usuario es admin
+    ...(user && user.role === 'admin' ? [{
       title: 'Administración',
       items: [
+        { path: '/home', icon: LayoutDashboard, label: 'Panel Admin' },
         { path: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
         { path: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
         { path: '/admin/tools', icon: Settings, label: 'Herramientas' },
         { path: '/users', icon: Users, label: 'Usuarios' },
+      ]
+    }, {
+      title: 'Estadísticas',
+      items: [
+        { path: '/admin/stats/fruits', icon: Apple, label: 'Estadísticas Frutas' },
+        { path: '/admin/stats/recipes', icon: BookOpen, label: 'Estadísticas Recetas' },
+        { path: '/admin/stats/users', icon: Users, label: 'Estadísticas Usuarios' },
+        { path: '/admin/stats/regions', icon: MapPin, label: 'Estadísticas Regiones' },
       ]
     }] : [])
   ];

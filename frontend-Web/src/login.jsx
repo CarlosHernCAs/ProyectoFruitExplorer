@@ -36,7 +36,8 @@ export default function Login() {
       }
 
       // ✔ Guardar en contexto: token + usuario (esto ya guarda en localStorage)
-      login(data.token, data.user);
+      // El backend envía "usuario", no "user"
+      login(data.token, data.usuario);
 
       // ✔ Redirigir a inicio (sin recargar la página)
       navigate("/", { replace: true });

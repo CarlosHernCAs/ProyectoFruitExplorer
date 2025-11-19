@@ -5,9 +5,19 @@ import { hashPassword } from '../utils/hash.js';
 // Listar todos los usuarios (solo admin)
 export const getAllUsers = async (req, res) => {
   try {
-    const [rows] = await pool.query(
-      'SELECT id, email, display_name, created_at, last_login FROM users'
-    );
+    const [rows] = await pool.query(`
+      SELECT
+        u.id,
+        u.email,
+        u.display_name,
+        u.created_at,
+        u.last_login,
+        r.name as role
+      FROM users u
+      LEFT JOIN user_roles ur ON u.id = ur.user_id
+      LEFT JOIN roles r ON ur.role_id = r.id
+      ORDER BY u.created_at DESC
+    `);
     res.status(200).json({ usuarios: rows });
   } catch (err) {
     console.error(err);
@@ -119,5 +129,46 @@ export const removeRole = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ mensaje: 'Error al eliminar rol' });
+  }
+};
+
+// Actualizar rol de usuario (solo admin)
+export const updateUserRole = async (req, res) => {
+  const { user_id, role_name } = req.body;
+
+  try {
+    // Obtener el ID del nuevo rol
+    const [roles] = await pool.query('SELECT id FROM roles WHERE name = ?', [role_name]);
+
+    if (roles.length === 0) {
+      return res.status(404).json({ mensaje: 'Rol no encontrado' });
+    }
+
+    const newRoleId = roles[0].id;
+
+    // Verificar si el usuario ya tiene un rol asignado
+    const [existing] = await pool.query(
+      'SELECT role_id FROM user_roles WHERE user_id = ?',
+      [user_id]
+    );
+
+    if (existing.length > 0) {
+      // Actualizar el rol existente
+      await pool.query(
+        'UPDATE user_roles SET role_id = ? WHERE user_id = ?',
+        [newRoleId, user_id]
+      );
+    } else {
+      // Insertar nuevo rol
+      await pool.query(
+        'INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)',
+        [user_id, newRoleId]
+      );
+    }
+
+    res.status(200).json({ mensaje: 'Rol actualizado correctamente' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ mensaje: 'Error al actualizar rol' });
   }
 };

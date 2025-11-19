@@ -49,10 +49,53 @@ import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 import { Toaster } from "react-hot-toast";
 
-// 🔒 RUTA PROTEGIDA
+// 🔒 RUTA PROTEGIDA (requiere login)
 function ProtectedRoute({ children }) {
-  const { token } = useContext(AuthContext);
+  const { token, loading } = useContext(AuthContext);
+
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        fontSize: '1.5rem'
+      }}>
+        Verificando sesión... 🍓
+      </div>
+    );
+  }
+
   if (!token) return <Navigate to="/login" replace />;
+  return children;
+}
+
+// 🔐 RUTA SOLO PARA ADMIN
+function AdminRoute({ children }) {
+  const { token, user, loading } = useContext(AuthContext);
+
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        fontSize: '1.5rem'
+      }}>
+        Verificando permisos... 🍓
+      </div>
+    );
+  }
+
+  if (!token) return <Navigate to="/login" replace />;
+
+  // Verificar si es admin
+  if (user && user.role !== 'admin') {
+    return <Navigate to="/" replace />;
+  }
+
   return children;
 }
 
@@ -75,13 +118,13 @@ function App() {
                   {/* Inicio */}
                   <Route path="/" element={<LandingPage />} />
 
-                  {/* ADMIN PANEL */}
+                  {/* ADMIN PANEL - Solo administradores */}
                   <Route
                     path="/home"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <Home />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
 
@@ -89,21 +132,21 @@ function App() {
                   <Route path="/fruits" element={<FruitList />} />
                   <Route path="/fruits/:id" element={<FruitDetail />} />
 
-                  {/* FRUTAS - Rutas protegidas (admin) */}
+                  {/* FRUTAS - Rutas protegidas (solo admin) */}
                   <Route
                     path="/fruits/add"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <AddFruit />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
                   <Route
                     path="/fruits/edit/:id"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <EditFruit />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
 
@@ -111,21 +154,21 @@ function App() {
                   <Route path="/recipes" element={<RecipeList />} />
                   <Route path="/recipes/:id" element={<RecipeDetail />} />
 
-                  {/* RECETAS - Rutas protegidas (admin) */}
+                  {/* RECETAS - Rutas protegidas (solo admin) */}
                   <Route
                     path="/recipes/add"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <AddRecipe />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
                   <Route
                     path="/recipes/edit/:id"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <EditRecipe />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
 
@@ -133,21 +176,21 @@ function App() {
                   <Route path="/regions" element={<RegionList />} />
                   <Route path="/regions/:id" element={<RegionDetail />} />
 
-                  {/* REGIONES - Rutas protegidas (admin) */}
+                  {/* REGIONES - Rutas protegidas (solo admin) */}
                   <Route
                     path="/regions/add"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <AddRegion />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
                   <Route
                     path="/regions/edit/:id"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <EditRegion />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
 
@@ -155,67 +198,70 @@ function App() {
                   <Route
                     path="/users"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <UsersPage />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
+
+                  {/* RECONOCIMIENTO DE FRUTAS - Ruta pública */}
+                  <Route path="/recognition" element={<FruitRecognition />} />
 
                   {/* ADMIN DASHBOARD - Solo admin */}
                   <Route
                     path="/admin/dashboard"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <DashboardMain />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
                   <Route
                     path="/admin/analytics"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <Analytics />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
                   <Route
                     path="/admin/tools"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <AdminTools />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
                   <Route
                     path="/admin/stats/fruits"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <FruitStats />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
                   <Route
                     path="/admin/stats/recipes"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <RecipeStats />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
                   <Route
                     path="/admin/stats/users"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <UserStats />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
                   <Route
                     path="/admin/stats/regions"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <RegionStats />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
                 </Routes>

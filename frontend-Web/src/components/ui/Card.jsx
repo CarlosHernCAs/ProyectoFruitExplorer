@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import './Card.css';
 
-export default function Card({
+function Card({
   children,
   variant = 'default',
   padding = 'md',
@@ -92,3 +92,6 @@ CardFooter.propTypes = {
   children: PropTypes.node.isRequired,
   className: PropTypes.string,
 };
+
+export { Card };
+export default Card;
