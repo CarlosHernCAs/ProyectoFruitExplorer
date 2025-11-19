@@ -11,6 +11,7 @@ import Layout from "./components/layout/Layout";
 import Login from "./login";
 import Register from "./register";
 import Home from "./Home";
+import LandingPage from "./pages/LandingPage";
 
 // Frutas
 import FruitList from "./pages/FruitList";
@@ -70,23 +71,7 @@ function App() {
               <Layout>
                 <Routes>
                   {/* Inicio */}
-                  <Route
-                    path="/"
-                    element={
-                      <section className="section">
-                        <img
-                          className="home-hero-img"
-                          src="https://cdn-icons-png.flaticon.com/512/415/415733.png"
-                          alt="Fruta"
-                        />
-                        <h2>Explora el mundo de las frutas</h2>
-                        <p>
-                          Bienvenido a <strong>FruitExplorer</strong>, donde podrás
-                          ver todas las frutas disponibles.
-                        </p>
-                      </section>
-                    }
-                  />
+                  <Route path="/" element={<LandingPage />} />
 
                   {/* ADMIN PANEL */}
                   <Route
