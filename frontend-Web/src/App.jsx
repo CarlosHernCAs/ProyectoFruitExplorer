@@ -32,6 +32,9 @@ import EditRegion from "./pages/EditRegion";
 // Usuarios
 import UsersPage from "./pages/UsersPage";
 
+// Reconocimiento de Frutas
+import FruitRecognition from "./pages/FruitRecognition";
+
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 
@@ -55,6 +58,7 @@ function App() {
           <Link to="/fruits">Frutas</Link>
           <Link to="/recipes">Recetas</Link>
           <Link to="/regions">Regiones</Link>
+          <Link to="/recognition">🔍 Reconocer</Link>
 
           {!token && <Link to="/login">Login</Link>}
 
@@ -180,6 +184,9 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* RECONOCIMIENTO DE FRUTAS - Público */}
+          <Route path="/recognition" element={<FruitRecognition />} />
         </Routes>
       </main>
 

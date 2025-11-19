@@ -8,6 +8,7 @@ import recipeStepRoutes from './recipeStep.routes.js';
 import regionRoutes from './region.routes.js';
 import fruitRecipeRoutes from './fruitRecipe.routes.js';
 import queryRoutes from './query.routes.js';
+import recognitionRoutes from './recognition.routes.js';
 
 export const router = Router();
 
@@ -20,3 +21,4 @@ router.use('/steps', recipeStepRoutes);
 router.use('/regions', regionRoutes);
 router.use('/fruit-recipes', fruitRecipeRoutes);
 router.use('/queries', queryRoutes);
+router.use('/recognition', recognitionRoutes);
